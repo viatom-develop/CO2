@@ -2,6 +2,8 @@ package com.lepu.co2.constant;
 
 public class Co2Constant {
 
+
+
     /**
      * 是否是测试数据
      */
@@ -15,6 +17,7 @@ public class Co2Constant {
      */
     public static final byte TYPE_Waveform_Data_Mode  = (byte)0x80; //8.1 CO2 波形/数据模式（命令 80h）
     /**
+     * 偏移校准/零校准命令
      * 这个命令用于启动Capnostat 0。零用于校正气道适配器类型的差异。
      * Capnostat zero必须在没有CO的情况下进行
      * 2．有关详细描述，请参阅第4.2节，Capnostat Zeroing。
@@ -53,7 +56,7 @@ public class Co2Constant {
      */
     public static final byte TYPE_Stop_Continuous_Mode  = (byte)0xC9; //停止连续模式(命令C9h)
     /**
-     *此命令返回当前软件修订级别。 修订级别是一串 
+     *此命令返回当前软件修订级别。 修订级别是一串
      * 最多 35 个非 NULL 终止的 ASCII 字符； 它的长度是 NBF - 2。
      * 字节 RF 描述了请求的修订字符串。 下表描述了
      * 可用的修订字符串请求。
@@ -78,7 +81,7 @@ public class Co2Constant {
      * 能力（对于 SCI = 0）或启用能力的当前状态（SCI = 1 或 SCI =
      * 2）。
      */
-    public static final byte TYPE_Sensor_Capabilities = (byte)0xC8; //传感器功能（命令 CBh）
+    public static final byte TYPE_Sensor_Capabilities = (byte)0xCB; //传感器功能（命令 CBh）
     /**
      *此命令用于强制系统清除未检测到呼吸标志。 什么时候
      * 发出此命令，未检测到呼吸的状态位被清除，系统

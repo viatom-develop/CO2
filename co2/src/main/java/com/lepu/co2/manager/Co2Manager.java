@@ -2,17 +2,21 @@ package com.lepu.co2.manager;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.provider.FontRequest;
 import android.serialport.SerialPort;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.lepu.co2.constant.Co2Constant;
 import com.lepu.co2.constant.ConfigConst;
 import com.lepu.co2.listener.CmdReplyListener;
 import com.lepu.co2.listener.SerialConnectListener;
 import com.lepu.co2.obj.CmdReply;
+import com.lepu.co2.obj.Co2Data;
+import com.lepu.co2.obj.SerialMsg;
 import com.lepu.co2.task.CmdReplyTimeOutTask;
 import com.lepu.co2.uitl.ByteUtils;
+import com.lepu.co2.uitl.ChecksumUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -122,6 +126,7 @@ public class Co2Manager {
      */
     public void serialSendData(byte[] bytes, CmdReplyListener cmdReplyListener) {
         try {
+            Log.e("tag","写入数据");
             mCmdReplyListener = cmdReplyListener;
             writeBytes (bytes);
             CmdReplyTimeOutTask cmdReplyTimeOutTask=
@@ -174,8 +179,8 @@ public class Co2Manager {
                 break;
             }
             //判断开头
-            if (data[i] == SerialContent.SYNC_H && data[i + 1] == SerialContent.SYNC_L) {
-                completeData = new byte[(0x00ff & data[i + 2])];
+            if (isSerialCmd(data[i])) {
+                completeData = new byte[(0x00ff & data[i + 1])+2];
                 if (i + completeData.length > data.length) {
                     //把最后的数据 放在下一个任务中
                     surplusData = new byte[data.length - i];
@@ -184,8 +189,8 @@ public class Co2Manager {
                 } else {
                     taskindex++;
                     System.arraycopy(data, i, completeData, 0, completeData.length);
-                    //校验数据
-                    if (CRCUitl.CRC8(completeData)  ) {
+                    //校验数据 校验和
+                    if (ChecksumUtil.AddChecksum(completeData.length - 1, completeData) == completeData[completeData.length - 1]) {
                         //越过已处理数据
                         i = i + completeData.length - 1;
                         //分发数据
@@ -204,11 +209,78 @@ public class Co2Manager {
     }
 
 
-    public boolean is
+    public boolean isSerialCmd(byte buf) {
+        switch (buf) {
+            case Co2Constant.TYPE_Waveform_Data_Mode:
+            case Co2Constant.TYPE_Capnostat_Zero_Command:
+            case Co2Constant.TYPE_Get_Set_Sensor_Settings:
+            case Co2Constant.TYPE_CO2_O2_Waveform_Mode:
+            case Co2Constant.TYPE_NACK_Error:
+            case Co2Constant.TYPE_Stop_Continuous_Mode:
+            case Co2Constant.TYPE_GET_SOFTWARE_REVISION:
+            case Co2Constant.TYPE_Sensor_Capabilities:
+            case Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag:
+            case Co2Constant.TYPE_Reset_Capnostat:
+                return true;
+        }
+        return false;
+    }
+
+    public void distributeMsg(@NonNull byte[] buf) {
+        SerialMsg serialMsg= new SerialMsg(buf);
+
+
+        switch (serialMsg.getType()) {
+            case Co2Constant.TYPE_Waveform_Data_Mode: {
+                Co2Data co2Data=new Co2Data(serialMsg.getContent());
+                Log.e("TYPE","co2Data.getCO2Status()"+co2Data.getCO2Status());
+
+             //   Log.e("co2Data","getCo2Wave==="+co2Data.getCo2Wave()+"----getETCO2=="+co2Data.getETCO2()+"getInspiredCO2=="+co2Data.getInspiredCO2());
+            }
+            break;
+            case Co2Constant.TYPE_Capnostat_Zero_Command: {
+                Log.e("TYPE","TYPE_Capnostat_Zero_Command");
+            }
+            break;
+            case Co2Constant.TYPE_Get_Set_Sensor_Settings: {
+                Log.e("TYPE","TYPE_Get_Set_Sensor_Settings");
+            }
+            break;
+            case Co2Constant.TYPE_CO2_O2_Waveform_Mode: {
+                Log.e("TYPE","TYPE_CO2_O2_Waveform_Mode");
+            }
+            break;
+            case Co2Constant.TYPE_NACK_Error: {
+                Log.e("TYPE","TYPE_NACK_Error");
+            }
+            break;
+            case Co2Constant.TYPE_Stop_Continuous_Mode: {
+                Log.e("TYPE","TYPE_Stop_Continuous_Mode");
+            }
+            break;
+            case Co2Constant.TYPE_GET_SOFTWARE_REVISION: {
+                Log.e("TYPE","TYPE_GET_SOFTWARE_REVISION");
+            }
+            break;
+            case Co2Constant.TYPE_Sensor_Capabilities: {
+                Log.e("TYPE","TYPE_Sensor_Capabilities");
+            }
+            break;
+            case Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag: {
+                Log.e("TYPE","TYPE_Reset_No_Breaths_Detected_Flag");
+            }
+            break;
+            case Co2Constant.TYPE_Reset_Capnostat: {
+                Log.e("TYPE","TYPE_Reset_Capnostat");
+            }
+            break;
+            default:
+        }
+    }
 
 
     public static void main(String[] args) {
-        byte b=(byte) 80;
+        byte b = (byte) 80;
 
 
     }

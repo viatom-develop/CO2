@@ -1,7 +1,6 @@
 package com.lepu.co2.constant;
 
-import android.util.Log;
-
+import com.lepu.co2.obj.SerialMsg;
 import com.lepu.co2.uitl.ChecksumUtil;
 
 
@@ -10,44 +9,66 @@ import com.lepu.co2.uitl.ChecksumUtil;
  */
 public class SerialCmd {
 
-    static byte index = 0;
 
     /***************************************************参数板整体业务 start*************************************************************/
 
+    /**
+     * 8.1 CO2 波形/数据模式（命令 80h）
+     */
+    public static byte[] cmdWaveformDataMode() {
+        byte[] data = new byte[1];
+        data[0] = 0;
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Waveform_Data_Mode, data);
+        return msg.toBytes();
+    }
 
     /**
-     *获取版本号
+     * 8.2零校准命令 这个命令用于启动Capnostat 0。零用于校正气道适配器类型的差异。
      */
-    public static byte[] cmdGetSoftwareRevision() {
-       /* SerialContent content = new SerialContent(SerialContent.TOKEN_PARAM, SerialContent.TYPE_RESET, null);
-        SerialMsg msg = new SerialMsg(index, SerialMsg.TYPE_CMD, content);*/
-        byte[] data = new byte[4];
+    public static byte[] cmdCapnostatZeroCommand() {
+        byte[] data = new byte[0];
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Capnostat_Zero_Command, data);
+        return msg.toBytes();
+    }
 
-        data[0] = Co2Constant.TYPE_GET_SOFTWARE_REVISION;
-        data[1] = (byte) (data.length - 2);//
-        data[2] = (byte) 0;
-  //        data[3] = (byte) ChecksumUtil.sumCheck(data,3);
-     //   Log.e("sck",String.format("%x",data[3] ));
-        data[3] =   ChecksumUtil.AddChecksum(3, data);
-        Log.e("sck",String.format("%x",data[3] ));
-        index++;
-        return data;
+    /**
+     * 8.3 设置气压
+     * Default: 760 mmHg.
+     * Resolution: 1 mmHg (400-850 mmHg)
+     * Conversion: Barometric Pressure = (128 * DB1) + DB2
+     * DB1 = ( Barometric Pressure / 128 ) & 7Fh
+     * DB2 = ( Barometric Pressure) & 7Fh
+     */
+    public static byte[] cmdSetBarometricPressure(int barometricPressure) {
+        byte[] data = new byte[0];
+        data[0]=1;
+        data[1]= (byte) (( barometricPressure / 128 ) & 0x7F);
+        data[2]= (byte) (( barometricPressure) & 0x7F);
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
+        return msg.toBytes();
     }
 
 
     /**
-     *停止连续模式(命令C9h)
+     * 停止连续模式(命令C9h)
      */
     public static byte[] cmdStopContinuousMode() {
-       /* SerialContent content = new SerialContent(SerialContent.TOKEN_PARAM, SerialContent.TYPE_RESET, null);
-        SerialMsg msg = new SerialMsg(index, SerialMsg.TYPE_CMD, content);*/
-        byte[] data = new byte[3];
+        byte[] data = new byte[0];
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Stop_Continuous_Mode, data);
+        return msg.toBytes();
+    }
 
-        data[0] = Co2Constant.TYPE_Stop_Continuous_Mode;
+
+    /**
+     * 获取版本号
+     */
+    public static byte[] cmdGetSoftwareRevision() {
+        byte[] data = new byte[4];
+        data[0] = Co2Constant.TYPE_GET_SOFTWARE_REVISION;
         data[1] = (byte) (data.length - 2);//
-        data[2] =   ChecksumUtil.AddChecksum(2, data);
-        Log.e("sck",String.format("%x",data[2] ));
-        index++;
+        data[2] = (byte) 0;
+        data[3] = ChecksumUtil.AddChecksum(3, data);
+
         return data;
     }
 
