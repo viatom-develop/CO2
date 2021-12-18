@@ -6,8 +6,11 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.lepu.co2.CO2UnitEnum;
+import com.lepu.co2.enums.BalanceGasEnum;
+import com.lepu.co2.enums.CO2UnitEnum;
 import com.lepu.co2.constant.SerialCmd;
+import com.lepu.co2.enums.SleepModeEnum;
+import com.lepu.co2.enums.TimePeriodEnum;
 import com.lepu.co2.listener.CmdReplyListener;
 import com.lepu.co2.listener.SerialConnectListener;
 import com.lepu.co2.manager.Co2Manager;
@@ -56,11 +59,22 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_set_gas_compensations).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSetGasCompensations(16,0, (short) 0), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSetGasCompensations(16, BalanceGasEnum.AIR, (short) 0), cmdReplyListener);
             }
 
 
         });
+        //设置计算周期
+        findViewById(R.id.btn_set_time_period).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSetTimePeriod(TimePeriodEnum.TimePeriod1B), cmdReplyListener);
+            }
+
+
+        });
+
+
 
         //设置工作温度
         findViewById(R.id.btn_set_gas_temperature).setOnClickListener(new View.OnClickListener() {
@@ -146,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSleepMode(0), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSleepMode(SleepModeEnum.NormalOperatingMode), cmdReplyListener);
 
             }
         });

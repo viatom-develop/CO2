@@ -1,5 +1,8 @@
-package com.lepu.co2;
+package com.lepu.co2.enums;
 
+/**
+ * 单位
+ */
 public enum CO2UnitEnum {
     mmHg((byte)0),
     KPa((byte)1),

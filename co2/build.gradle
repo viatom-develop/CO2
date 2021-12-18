@@ -9,11 +9,12 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.lepu.co2'
                 artifactId = 'co2'
-                version = '1.0.3'
+                version = '1.0.0'
             }
         }
     }
 }
+
 android {
     compileSdk 30
 

@@ -1,6 +1,9 @@
 package com.lepu.co2.constant;
 
-import com.lepu.co2.CO2UnitEnum;
+import com.lepu.co2.enums.BalanceGasEnum;
+import com.lepu.co2.enums.CO2UnitEnum;
+import com.lepu.co2.enums.SleepModeEnum;
+import com.lepu.co2.enums.TimePeriodEnum;
 import com.lepu.co2.obj.SerialMsg;
 import com.lepu.co2.uitl.ByteUtils;
 import com.lepu.co2.uitl.ChecksumUtil;
@@ -70,6 +73,19 @@ public class SerialCmd {
         return msg.toBytes();
     }
 
+
+    /**
+     * 8.3 5设置计算周期
+     */
+    public static byte[] cmdSetTimePeriod(TimePeriodEnum timePeriodEnum) {
+        byte[] data = new byte[2];
+        data[0]=5;
+        data[1]= (byte) timePeriodEnum.getValue();
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
+        return msg.toBytes();
+    }
+
+
     /**
      * 8.3 7设置二氧化碳单位
      */
@@ -87,15 +103,15 @@ public class SerialCmd {
     /**
      * 8.3 11设置补偿气体
      * @param O2Compensation  氧气补偿 1 % ( 0 – 100 % ) 默认16
-     * @param BalanceGas       Default: 0 (room air)   room air= 0  , N2O = 1 , Helium= 2
+     * @param balanceGasEnum       Default: 0 (room air)   room air= 0  , N2O = 1 , Helium= 2
      * @param AnestheticAgent  默认 0  范围 0.1 % ( 0.0 – 20.0 % )
      * @return
      */
-    public static byte[] cmdSetGasCompensations(int  O2Compensation ,int BalanceGas ,short AnestheticAgent) {
+    public static byte[] cmdSetGasCompensations(int  O2Compensation , BalanceGasEnum balanceGasEnum, short AnestheticAgent) {
         byte[] data = new byte[5];
         data[0]=11;
         data[1]= (byte) O2Compensation;
-        data[2]= (byte) BalanceGas;
+        data[2]= (byte) balanceGasEnum.getValue();
 
         data[3]= (byte) ((AnestheticAgent >> 7) & 0x7f); ;
         data[4]=  (byte) (AnestheticAgent& 0x7f);
@@ -143,10 +159,10 @@ public class SerialCmd {
      * 1 模式 1 – 关闭电源（维护加热器）
      * 2 模式 2 - 最大节能
      */
-    public static byte[] cmdSleepMode(int sleepMode) {
+    public static byte[] cmdSleepMode(SleepModeEnum sleepMode) {
         byte[] data = new byte[2];
         data[0]=(byte)8;
-        data[1]= (byte) sleepMode;
+        data[1]= (byte) sleepMode.getValue();
         SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
         return msg.toBytes();
     }
