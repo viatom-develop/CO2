@@ -2,6 +2,8 @@ package com.lepu.co2.obj;
 
 import com.lepu.co2.uitl.ByteUtils;
 
+import java.util.Arrays;
+
 /**
  * 二氧化碳数据
  */
@@ -52,16 +54,18 @@ public class Co2Data {
      */
     int HardwareStatus;
 
+    byte[] buf;
+
 
     public Co2Data(byte[] buf){
+        this.buf=buf;
         SYNC=buf[0];
-     //   co2Wave=(short) (buf[1] & 0xff + ((buf[2] & 0xff) << 8));
-        co2Wave= (short) ((( 128 * buf[1]) + buf[2])-1000);
+        co2Wave=(short) (buf[1] & 0xff + ((buf[2] & 0xff) << 8));
+        //    co2Wave= (short) ((( 128 * buf[1]) + buf[2])-1000);
         if (buf.length>3){
             DPI=buf[3];
 
             if (DPI!=0){
-                //   CO2Status=buf[4];
 
                 switch (DPI){
                     case 1:{
@@ -170,5 +174,21 @@ public class Co2Data {
 
     public void setHardwareStatus(int hardwareStatus) {
         HardwareStatus = hardwareStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "Co2Data{" +
+                "SYNC=" + SYNC +
+                ", co2Wave=" + co2Wave +
+                ", DPI=" + DPI +
+                ", CO2Status=" + CO2Status +
+                ", ETCO2=" + ETCO2 +
+                ", respirationRate=" + respirationRate +
+                ", InspiredCO2=" + InspiredCO2 +
+                ", BreathDetectedFlag=" + BreathDetectedFlag +
+                ", HardwareStatus=" + HardwareStatus +
+                ", buf=" + Arrays.toString(buf) +
+                '}';
     }
 }

@@ -35,7 +35,7 @@ public class SerialMsg {
         byte[] buf=new byte[content.length+3];
         buf[0]=type;
         buf[1]=nbf;
-        System.arraycopy(buf, 2, content, 0, nbf-1);
+        System.arraycopy( content, 0,buf , 2, content.length);
         cks= ChecksumUtil.AddChecksum(buf.length-1, buf);
      }
 
@@ -43,9 +43,9 @@ public class SerialMsg {
         byte[] buf=new byte[content.length+3];
         buf[0]=type;
         buf[1]=nbf;
-        System.arraycopy(buf, 2, content, 0, nbf-1);
+        System.arraycopy( content, 0,buf , 2, content.length);
         cks= ChecksumUtil.AddChecksum(buf.length-1, buf);
-        return buf;
+         return buf;
     }
 
     public byte getType() {

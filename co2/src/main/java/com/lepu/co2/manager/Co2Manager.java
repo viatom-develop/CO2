@@ -13,6 +13,7 @@ import com.lepu.co2.listener.CmdReplyListener;
 import com.lepu.co2.listener.SerialConnectListener;
 import com.lepu.co2.obj.CmdReply;
 import com.lepu.co2.obj.Co2Data;
+import com.lepu.co2.obj.Co2O2Data;
 import com.lepu.co2.obj.SerialMsg;
 import com.lepu.co2.task.CmdReplyTimeOutTask;
 import com.lepu.co2.uitl.ByteUtils;
@@ -105,8 +106,9 @@ public class Co2Manager {
                             if (mInputStream == null) return;
                             byte[] buffer = ByteUtils.readStream(mInputStream);
                             for (int i=0;i<buffer.length;i++){
-                                Log.e("buffer", buffer[i]+"");
+                                Log.e("buffer", String.format("%x",buffer[i]) );
                             }
+
                             Log.e("buffer",  "接收完成");
                             //处理数据
                             dataProcess(buffer);
@@ -233,10 +235,11 @@ public class Co2Manager {
         switch (serialMsg.getType()) {
             case Co2Constant.TYPE_Waveform_Data_Mode: {
                 Co2Data co2Data=new Co2Data(serialMsg.getContent());
-                Log.e("TYPE","co2Data.getCO2Status()"+co2Data.getCO2Status());
-
-             //   Log.e("co2Data","getCo2Wave==="+co2Data.getCo2Wave()+"----getETCO2=="+co2Data.getETCO2()+"getInspiredCO2=="+co2Data.getInspiredCO2());
-            }
+                if (co2Data.getCO2Status()==1){
+             //      Log.e("TYPE",co2Data.toString());
+                }
+              //  Log.e("TYPE",co2Data.toString());
+                   }
             break;
             case Co2Constant.TYPE_Capnostat_Zero_Command: {
                 Log.e("TYPE","TYPE_Capnostat_Zero_Command");
@@ -247,7 +250,8 @@ public class Co2Manager {
             }
             break;
             case Co2Constant.TYPE_CO2_O2_Waveform_Mode: {
-                Log.e("TYPE","TYPE_CO2_O2_Waveform_Mode");
+                Co2O2Data co2Data=new Co2O2Data(serialMsg.getContent());
+                Log.e("TYPE","getCo2=="+co2Data.getCo2()+"----getO2=="+co2Data.getO2());
             }
             break;
             case Co2Constant.TYPE_NACK_Error: {

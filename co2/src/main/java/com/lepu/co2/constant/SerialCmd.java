@@ -1,6 +1,8 @@
 package com.lepu.co2.constant;
 
+import com.lepu.co2.CO2UnitEnum;
 import com.lepu.co2.obj.SerialMsg;
+import com.lepu.co2.uitl.ByteUtils;
 import com.lepu.co2.uitl.ChecksumUtil;
 
 
@@ -32,22 +34,85 @@ public class SerialCmd {
     }
 
     /**
-     * 8.3 设置气压
+     * 8.3 1设置气压
      * Default: 760 mmHg.
      * Resolution: 1 mmHg (400-850 mmHg)
      * Conversion: Barometric Pressure = (128 * DB1) + DB2
      * DB1 = ( Barometric Pressure / 128 ) & 7Fh
      * DB2 = ( Barometric Pressure) & 7Fh
      */
-    public static byte[] cmdSetBarometricPressure(int barometricPressure) {
-        byte[] data = new byte[0];
+    public static byte[] cmdSetBarometricPressure(short barometricPressure) {
+        byte[] data = new byte[3];
         data[0]=1;
-        data[1]= (byte) (( barometricPressure / 128 ) & 0x7F);
-        data[2]= (byte) (( barometricPressure) & 0x7F);
+        byte[] value= ByteUtils.short2byte(barometricPressure);
+      /*  data[1]= value[1];
+        data[2]= value[0];*/
+        data[1]= (byte) ((barometricPressure >> 7) & 0x7f);
+        data[2]= (byte) (barometricPressure& 0x7f);
+
         SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
         return msg.toBytes();
     }
 
+    public static void main(String[] args) {
+        cmdSetBarometricPressure((short) 760);
+    }
+
+    /**
+     * 8.3 4设置气体温度 工作温度  单位
+     */
+    public static byte[] cmdSetGasTemperature(short gasTemperature) {
+        byte[] data = new byte[3];
+        data[0]=4;
+        data[1]= (byte) ((gasTemperature >> 7) & 0x7f);
+        data[2]= (byte) (gasTemperature& 0x7f);
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
+        return msg.toBytes();
+    }
+
+    /**
+     * 8.3 7设置二氧化碳单位
+     */
+    public static byte[] cmdSetCo2Unit(CO2UnitEnum  co2UnitEnum) {
+        byte[] data = new byte[2];
+        data[0]=7;
+        data[1]= co2UnitEnum.getValue();
+
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
+        return msg.toBytes();
+    }
+
+
+
+    /**
+     * 8.3 11设置补偿气体
+     * @param O2Compensation  氧气补偿 1 % ( 0 – 100 % ) 默认16
+     * @param BalanceGas       Default: 0 (room air)   room air= 0  , N2O = 1 , Helium= 2
+     * @param AnestheticAgent  默认 0  范围 0.1 % ( 0.0 – 20.0 % )
+     * @return
+     */
+    public static byte[] cmdSetGasCompensations(int  O2Compensation ,int BalanceGas ,short AnestheticAgent) {
+        byte[] data = new byte[5];
+        data[0]=11;
+        data[1]= (byte) O2Compensation;
+        data[2]= (byte) BalanceGas;
+
+        data[3]= (byte) ((AnestheticAgent >> 7) & 0x7f); ;
+        data[4]=  (byte) (AnestheticAgent& 0x7f);
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
+        return msg.toBytes();
+    }
+
+
+    /**
+     * 8.4 CO2 / O2 Waveform Mode (Command 90h)
+     */
+    public static byte[] cmdWaveformDataModeC2CO2() {
+        byte[] data = new byte[1];
+        data[0] = 0;
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_CO2_O2_Waveform_Mode, data);
+        return msg.toBytes();
+    }
 
     /**
      * 停止连续模式(命令C9h)
@@ -72,6 +137,35 @@ public class SerialCmd {
         return data;
     }
 
+    /**
+     *睡眠模式
+     * 0 正常工作模式
+     * 1 模式 1 – 关闭电源（维护加热器）
+     * 2 模式 2 - 最大节能
+     */
+    public static byte[] cmdSleepMode(int sleepMode) {
+        byte[] data = new byte[2];
+        data[0]=(byte)8;
+        data[1]= (byte) sleepMode;
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
+        return msg.toBytes();
+    }
+    /**
+     *测试用例
+     */
+    public static byte[] cmdTest() {
+       // 84h - 02h - 05h – 75h
+      /*  byte[] data = new byte[4];
+
+        data[0]= (byte) 0x84;
+        data[1]= 0x02;
+        data[2]= 0x05;
+        data[3]= 0x75;*/
+        byte[] data = new byte[1];
+        data[0]=(byte) 5;
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
+        return msg.toBytes();
+    }
 
     /**
      * Byte转Bit
@@ -110,9 +204,6 @@ public class SerialCmd {
                 (short) ((b >> 0) & 0x1);
     }
 
-    public static void main(String[] args) {
-        byte a = (byte) 0xCA;
-        System.out.println("");
-    }
+
 
 }
