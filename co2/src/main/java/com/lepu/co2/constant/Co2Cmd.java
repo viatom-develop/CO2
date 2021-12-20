@@ -12,7 +12,7 @@ import com.lepu.co2.uitl.ChecksumUtil;
 /**
  * 串口命令合成
  */
-public class SerialCmd {
+public class Co2Cmd {
 
 
     /***************************************************参数板整体业务 start*************************************************************/

@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.lepu.co2.enums.BalanceGasEnum;
 import com.lepu.co2.enums.CO2UnitEnum;
-import com.lepu.co2.constant.SerialCmd;
+import com.lepu.co2.constant.Co2Cmd;
 import com.lepu.co2.enums.SleepModeEnum;
 import com.lepu.co2.enums.TimePeriodEnum;
 import com.lepu.co2.listener.CmdReplyListener;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_stop_continuous_mode).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdStopContinuousMode(), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdStopContinuousMode(), cmdReplyListener);
             }
         });
 
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSetBarometricPressure((short) 760), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetBarometricPressure((short) 760), cmdReplyListener);
             }
 
 
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_set_gas_compensations).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSetGasCompensations(16, BalanceGasEnum.AIR, (short) 0), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetGasCompensations(16, BalanceGasEnum.AIR, (short) 0), cmdReplyListener);
             }
 
 
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_set_time_period).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSetTimePeriod(TimePeriodEnum.TimePeriod1B), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetTimePeriod(TimePeriodEnum.TimePeriod1B), cmdReplyListener);
             }
 
 
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSetGasTemperature((short) 350), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetGasTemperature((short) 350), cmdReplyListener);
             }
 
 
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSetCo2Unit((CO2UnitEnum.mmHg)), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetCo2Unit((CO2UnitEnum.mmHg)), cmdReplyListener);
             }
 
 
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdWaveformDataMode(), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdWaveformDataMode(), cmdReplyListener);
             }
 
 
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdWaveformDataModeC2CO2(), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdWaveformDataModeC2CO2(), cmdReplyListener);
             }
 
 
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdCapnostatZeroCommand(), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdCapnostatZeroCommand(), cmdReplyListener);
             }
 
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdGetSoftwareRevision(), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdGetSoftwareRevision(), cmdReplyListener);
 
             }
         });
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdTest(), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdTest(), cmdReplyListener);
 
             }
         });
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(SerialCmd.cmdSleepMode(SleepModeEnum.NormalOperatingMode), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSleepMode(SleepModeEnum.NormalOperatingMode), cmdReplyListener);
 
             }
         });
