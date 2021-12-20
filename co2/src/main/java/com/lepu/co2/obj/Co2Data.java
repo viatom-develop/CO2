@@ -105,7 +105,85 @@ public class Co2Data {
 
     }
 
+    public int getSYNC() {
+        return SYNC;
+    }
 
+    public void setSYNC(int SYNC) {
+        this.SYNC = SYNC;
+    }
+
+    public short getCo2Wave() {
+        return co2Wave;
+    }
+
+    public void setCo2Wave(short co2Wave) {
+        this.co2Wave = co2Wave;
+    }
+
+    public int getDPI() {
+        return DPI;
+    }
+
+    public void setDPI(int DPI) {
+        this.DPI = DPI;
+    }
+
+    public PrioritizedCO2Status getCO2Status() {
+        return CO2Status;
+    }
+
+    public void setCO2Status(PrioritizedCO2Status CO2Status) {
+        this.CO2Status = CO2Status;
+    }
+
+    public int getETCO2() {
+        return ETCO2;
+    }
+
+    public void setETCO2(int ETCO2) {
+        this.ETCO2 = ETCO2;
+    }
+
+    public int getRespirationRate() {
+        return respirationRate;
+    }
+
+    public void setRespirationRate(int respirationRate) {
+        this.respirationRate = respirationRate;
+    }
+
+    public int getInspiredCO2() {
+        return InspiredCO2;
+    }
+
+    public void setInspiredCO2(int inspiredCO2) {
+        InspiredCO2 = inspiredCO2;
+    }
+
+    public boolean isBreathDetectedFlag() {
+        return BreathDetectedFlag;
+    }
+
+    public void setBreathDetectedFlag(boolean breathDetectedFlag) {
+        BreathDetectedFlag = breathDetectedFlag;
+    }
+
+    public com.lepu.co2.obj.HardwareStatus getHardwareStatus() {
+        return HardwareStatus;
+    }
+
+    public void setHardwareStatus(com.lepu.co2.obj.HardwareStatus hardwareStatus) {
+        HardwareStatus = hardwareStatus;
+    }
+
+    public byte[] getBuf() {
+        return buf;
+    }
+
+    public void setBuf(byte[] buf) {
+        this.buf = buf;
+    }
 
     @Override
     public String toString() {

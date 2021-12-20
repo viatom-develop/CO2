@@ -3,13 +3,12 @@ package com.lepu.co2.manager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.serialport.SerialPort;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.lepu.co2.constant.Co2Constant;
-import com.lepu.co2.constant.EventMsgConst;
+import com.lepu.co2.constant.Co2EventMsgConst;
 import com.lepu.co2.listener.CmdReplyListener;
 import com.lepu.co2.listener.SerialConnectListener;
 import com.lepu.co2.obj.Co2Data;
@@ -225,7 +224,7 @@ public class Co2Manager {
         switch (serialMsg.getType()) {
             case Co2Constant.TYPE_Waveform_Data_Mode: {
                 Co2Data co2Data=new Co2Data(serialMsg.getContent());
-                LiveEventBus.get(EventMsgConst.MsgCo2Data).post(co2Data);
+                LiveEventBus.get(Co2EventMsgConst.MsgCo2Data).post(co2Data);
                 }
 
             break;
