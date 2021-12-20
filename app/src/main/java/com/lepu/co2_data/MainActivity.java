@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_set_gas_compensations).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetGasCompensations(16, BalanceGasEnum.AIR, (short) 0), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetGasCompensations(16, (byte) 0, (short) 0), cmdReplyListener);
             }
 
 
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetCo2Unit((CO2UnitEnum.mmHg)), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetCo2Unit((byte) 0), cmdReplyListener);
             }
 
 
