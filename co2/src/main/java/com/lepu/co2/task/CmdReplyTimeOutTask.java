@@ -2,20 +2,19 @@ package com.lepu.co2.task;
 
 
 import com.lepu.co2.listener.CmdReplyListener;
-import com.lepu.co2.obj.CmdReply;
 
 /**
  * 命令超时监听线程
  */
 public class CmdReplyTimeOutTask extends Thread{
     CmdReplyListener cmdReplyListener;
-     CmdReply cmdReply;
+    byte cmd;
     long timeOut;
 
 
-    public CmdReplyTimeOutTask(CmdReplyListener cmdReplyListener, CmdReply cmdReply, long timeOut) {
+    public CmdReplyTimeOutTask(CmdReplyListener cmdReplyListener,byte cmd, long timeOut) {
         this.cmdReplyListener = cmdReplyListener;
-        this.cmdReply = cmdReply;
+        this.cmd = cmd;
         this.timeOut=timeOut;
     }
 
@@ -28,7 +27,7 @@ public class CmdReplyTimeOutTask extends Thread{
             e.printStackTrace();
         }
         if (cmdReplyListener!=null){
-            cmdReplyListener.onTimeOut(cmdReply);
+            cmdReplyListener.onTimeOut(cmd);
         }
 
 
@@ -42,12 +41,12 @@ public class CmdReplyTimeOutTask extends Thread{
         this.cmdReplyListener = cmdReplyListener;
     }
 
-    public CmdReply getCmdReply() {
-        return cmdReply;
+    public byte getCmdReply() {
+        return cmd;
     }
 
-    public void setCmdReply(CmdReply cmdReply) {
-        this.cmdReply = cmdReply;
+    public void setCmdReply(byte cmd) {
+        this.cmd = cmd;
     }
     public void cencel(){
         cmdReplyListener=null;

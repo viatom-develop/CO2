@@ -7,23 +7,20 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.lepu.co2.constant.Co2Constant;
-import com.lepu.co2.constant.ConfigConst;
+import com.lepu.co2.constant.EventMsgConst;
 import com.lepu.co2.listener.CmdReplyListener;
 import com.lepu.co2.listener.SerialConnectListener;
-import com.lepu.co2.obj.CmdReply;
 import com.lepu.co2.obj.Co2Data;
 import com.lepu.co2.obj.Co2O2Data;
 import com.lepu.co2.obj.SerialMsg;
-import com.lepu.co2.task.CmdReplyTimeOutTask;
 import com.lepu.co2.uitl.ByteUtils;
 import com.lepu.co2.uitl.ChecksumUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -39,8 +36,6 @@ public class Co2Manager {
     Context mContext;
     //请求命令回调
     CmdReplyListener mCmdReplyListener;
-    //
-    List<CmdReplyTimeOutTask> mCmdReplyTimeOutTaskList=new ArrayList<>();
 
     public static Co2Manager getInstance() {
         if (instance == null) {
@@ -94,22 +89,20 @@ public class Co2Manager {
             mScheduledThreadPoolExecutor.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e("buffer",  "读取数据");
+            //        Log.e("buffer",  "读取数据");
                     try {
                         if (Co2Constant.IS_TEST_DATA) {//测试模式
                             //测试数据
                             //    sendTestEcgData();
                             //昨天采集的数据
                       //      sendTestEcgDataFile();
-                            Log.e("buffer",  "测试数据");
+                     //       Log.e("buffer",  "测试数据");
                         } else {//正式数据
                             if (mInputStream == null) return;
                             byte[] buffer = ByteUtils.readStream(mInputStream);
-                            for (int i=0;i<buffer.length;i++){
-                                Log.e("buffer", String.format("%x",buffer[i]) );
-                            }
 
-                            Log.e("buffer",  "接收完成");
+
+                   //         Log.e("buffer",  "接收完成");
                             //处理数据
                             dataProcess(buffer);
 
@@ -128,17 +121,14 @@ public class Co2Manager {
      */
     public void serialSendData(byte[] bytes, CmdReplyListener cmdReplyListener) {
         try {
-            Log.e("tag","写入数据");
+        //    Log.e("tag","写入数据");
             mCmdReplyListener = cmdReplyListener;
             writeBytes (bytes);
-            CmdReplyTimeOutTask cmdReplyTimeOutTask=
-                    new CmdReplyTimeOutTask(cmdReplyListener,new CmdReply(bytes[0]), ConfigConst.CMD_TIMEOUT);
-            mCmdReplyTimeOutTaskList.add(cmdReplyTimeOutTask);
-            cmdReplyTimeOutTask.start();
+
         } catch (Exception ex) {
             ex.printStackTrace();
             if (mCmdReplyListener != null) {
-                mCmdReplyListener.onFail(new CmdReply(bytes[0]));
+                mCmdReplyListener.onFail(bytes[0]);
             }
         }
     }
@@ -199,7 +189,7 @@ public class Co2Manager {
                         distributeMsg(completeData);
 
                     } else {
-                        Log.d("taskindex", taskindex + "");
+             //           Log.d("taskindex", taskindex + "");
                     }
                 }
             }
@@ -235,47 +225,47 @@ public class Co2Manager {
         switch (serialMsg.getType()) {
             case Co2Constant.TYPE_Waveform_Data_Mode: {
                 Co2Data co2Data=new Co2Data(serialMsg.getContent());
-                if (co2Data.getCO2Status()==1){
-             //      Log.e("TYPE",co2Data.toString());
+                LiveEventBus.get(EventMsgConst.MsgCo2Data).post(co2Data);
                 }
-              //  Log.e("TYPE",co2Data.toString());
-                   }
+
             break;
             case Co2Constant.TYPE_Capnostat_Zero_Command: {
-                Log.e("TYPE","TYPE_Capnostat_Zero_Command");
+                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Capnostat_Zero_Command);
+
             }
             break;
             case Co2Constant.TYPE_Get_Set_Sensor_Settings: {
-                Log.e("TYPE","TYPE_Get_Set_Sensor_Settings");
+                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Get_Set_Sensor_Settings);
             }
             break;
             case Co2Constant.TYPE_CO2_O2_Waveform_Mode: {
                 Co2O2Data co2Data=new Co2O2Data(serialMsg.getContent());
-                Log.e("TYPE","getCo2=="+co2Data.getCo2()+"----getO2=="+co2Data.getO2());
+
             }
             break;
             case Co2Constant.TYPE_NACK_Error: {
-                Log.e("TYPE","TYPE_NACK_Error");
+
+            //    mCmdReplyListener.onSuccess(Co2Constant.TYPE_NACK_Error);
             }
             break;
             case Co2Constant.TYPE_Stop_Continuous_Mode: {
-                Log.e("TYPE","TYPE_Stop_Continuous_Mode");
+                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Stop_Continuous_Mode);
             }
             break;
             case Co2Constant.TYPE_GET_SOFTWARE_REVISION: {
-                Log.e("TYPE","TYPE_GET_SOFTWARE_REVISION");
+                mCmdReplyListener.onSuccess(Co2Constant.TYPE_GET_SOFTWARE_REVISION);
             }
             break;
             case Co2Constant.TYPE_Sensor_Capabilities: {
-                Log.e("TYPE","TYPE_Sensor_Capabilities");
+                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Sensor_Capabilities);
             }
             break;
             case Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag: {
-                Log.e("TYPE","TYPE_Reset_No_Breaths_Detected_Flag");
+                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag);
             }
             break;
             case Co2Constant.TYPE_Reset_Capnostat: {
-                Log.e("TYPE","TYPE_Reset_Capnostat");
+                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Reset_Capnostat);
             }
             break;
             default:

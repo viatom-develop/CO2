@@ -1,5 +1,8 @@
 package com.lepu.co2.obj;
 
+import android.util.Log;
+
+import com.lepu.co2.enums.PrioritizedCO2Status;
 import com.lepu.co2.uitl.ByteUtils;
 
 import java.util.Arrays;
@@ -27,7 +30,7 @@ public class Co2Data {
     /**
      * 二氧化碳状态 当DPI等于1的时候有效
      */
-    int CO2Status;
+    PrioritizedCO2Status CO2Status;
 
     /**
      *ETCO2 x101  当DPI等于2的时候有效 ETCO2 = (DB1 * 2^7) + DB
@@ -45,14 +48,14 @@ public class Co2Data {
     int InspiredCO2;
 
     /**
-     *  呼吸检测标志 当DPI等于5的时候有效 Insp CO2 = (DB1 * 2^7) + DB2
+     *  呼吸检测标志 当DPI等于5的时候有效
      */
-    int BreathDetectedFlag;
+    boolean BreathDetectedFlag;
 
     /**
      *  硬件状态 仅在非零时发送。 见附录  当DPI等于7的时候有效
      */
-    int HardwareStatus;
+    HardwareStatus HardwareStatus;
 
     byte[] buf;
 
@@ -60,20 +63,19 @@ public class Co2Data {
     public Co2Data(byte[] buf){
         this.buf=buf;
         SYNC=buf[0];
-        co2Wave=(short) (buf[1] & 0xff + ((buf[2] & 0xff) << 8));
-        //    co2Wave= (short) ((( 128 * buf[1]) + buf[2])-1000);
+
+            co2Wave= (short) ((( 128 * buf[1]) + buf[2])-1000);
+          //  Log.e("co2Wave===",(co2Wave*0.01)+"");
         if (buf.length>3){
             DPI=buf[3];
-
             if (DPI!=0){
-
                 switch (DPI){
                     case 1:{
-                        CO2Status=buf[8];
+                        CO2Status=PrioritizedCO2Status.getPrioritizedCO2Status(buf[8]);
                     }
                     break;
                     case 2:{
-                        ETCO2 = (buf[4] * 2^7) + buf[5];
+                        ETCO2=  ( ( 128 * buf[4] ) + buf[5] );
                     }
                     break;
                     case 3:{
@@ -81,15 +83,15 @@ public class Co2Data {
                     }
                     break;
                     case 4:{
-                        InspiredCO2 = (buf[4] * 2^7) + buf[5];
+                        InspiredCO2  = ( ( 128 * buf[4] ) + buf[5] );
                     }
                     break;
                     case 5:{
-                        //  BreathDetectedFlag = (buf[4] * 2^7) + buf[5];
+                          BreathDetectedFlag = true;
                     }
                     break;
                     case 7:{
-                        //     HardwareStatus
+                       HardwareStatus=new HardwareStatus(buf[4], buf[5]);
                     }
                     break;
 
@@ -104,77 +106,6 @@ public class Co2Data {
     }
 
 
-    public int getSYNC() {
-        return SYNC;
-    }
-
-    public void setSYNC(int SYNC) {
-        this.SYNC = SYNC;
-    }
-
-    public short getCo2Wave() {
-        return co2Wave;
-    }
-
-    public void setCo2Wave(short co2Wave) {
-        this.co2Wave = co2Wave;
-    }
-
-    public int getDPI() {
-        return DPI;
-    }
-
-    public void setDPI(int DPI) {
-        this.DPI = DPI;
-    }
-
-    public int getCO2Status() {
-        return CO2Status;
-    }
-
-    public void setCO2Status(int CO2Status) {
-        this.CO2Status = CO2Status;
-    }
-
-    public int getETCO2() {
-        return ETCO2;
-    }
-
-    public void setETCO2(int ETCO2) {
-        this.ETCO2 = ETCO2;
-    }
-
-    public int getRespirationRate() {
-        return respirationRate;
-    }
-
-    public void setRespirationRate(int respirationRate) {
-        this.respirationRate = respirationRate;
-    }
-
-    public int getInspiredCO2() {
-        return InspiredCO2;
-    }
-
-    public void setInspiredCO2(int inspiredCO2) {
-        InspiredCO2 = inspiredCO2;
-    }
-
-    public int getBreathDetectedFlag() {
-        return BreathDetectedFlag;
-    }
-
-    public void setBreathDetectedFlag(int breathDetectedFlag) {
-        BreathDetectedFlag = breathDetectedFlag;
-    }
-
-    public int getHardwareStatus() {
-        return HardwareStatus;
-    }
-
-    public void setHardwareStatus(int hardwareStatus) {
-        HardwareStatus = hardwareStatus;
-    }
 
     @Override
     public String toString() {

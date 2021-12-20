@@ -14,7 +14,6 @@ import com.lepu.co2.enums.TimePeriodEnum;
 import com.lepu.co2.listener.CmdReplyListener;
 import com.lepu.co2.listener.SerialConnectListener;
 import com.lepu.co2.manager.Co2Manager;
-import com.lepu.co2.obj.CmdReply;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         });
-        //设置工作温度
+        //设置工作单位
         findViewById(R.id.btn_set_co2_unit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,17 +167,17 @@ public class MainActivity extends AppCompatActivity {
 
     CmdReplyListener cmdReplyListener = new CmdReplyListener() {
         @Override
-        public void onSuccess(CmdReply cmdReply) {
+        public void onSuccess(byte cmd) {
             Log.e("CmdReply", "onSuccess");
         }
 
         @Override
-        public void onFail(CmdReply cmdReply) {
+        public void onFail(byte cmd) {
             Log.e("CmdReply", "onFail");
         }
 
         @Override
-        public void onTimeOut(CmdReply cmdReply) {
+        public void onTimeOut(byte cmd) {
             Log.e("CmdReply", "onTimeOut");
         }
     };
