@@ -1,18 +1,18 @@
 package com.lepu.co2.task;
 
 
-import com.lepu.co2.listener.CmdReplyListener;
+import com.lepu.co2.listener.Co2CmdListener;
 
 /**
  * 命令超时监听线程
  */
-public class CmdReplyTimeOutTask extends Thread{
-    CmdReplyListener cmdReplyListener;
+public class Co2CmdTimeOutTask extends Thread{
+    Co2CmdListener cmdReplyListener;
     byte cmd;
     long timeOut;
 
 
-    public CmdReplyTimeOutTask(CmdReplyListener cmdReplyListener,byte cmd, long timeOut) {
+    public Co2CmdTimeOutTask(Co2CmdListener cmdReplyListener, byte cmd, long timeOut) {
         this.cmdReplyListener = cmdReplyListener;
         this.cmd = cmd;
         this.timeOut=timeOut;
@@ -33,11 +33,11 @@ public class CmdReplyTimeOutTask extends Thread{
 
     }
 
-    public CmdReplyListener getCmdReplyListener() {
+    public Co2CmdListener getCmdReplyListener() {
         return cmdReplyListener;
     }
 
-    public void setCmdReplyListener(CmdReplyListener cmdReplyListener) {
+    public void setCmdReplyListener(Co2CmdListener cmdReplyListener) {
         this.cmdReplyListener = cmdReplyListener;
     }
 

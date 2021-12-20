@@ -11,8 +11,8 @@ import com.lepu.co2.enums.CO2UnitEnum;
 import com.lepu.co2.constant.Co2Cmd;
 import com.lepu.co2.enums.SleepModeEnum;
 import com.lepu.co2.enums.TimePeriodEnum;
-import com.lepu.co2.listener.CmdReplyListener;
-import com.lepu.co2.listener.SerialConnectListener;
+import com.lepu.co2.listener.Co2CmdListener;
+import com.lepu.co2.listener.Co2ConnectListener;
 import com.lepu.co2.manager.Co2Manager;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
        // 数据以19200波特率传输，字节大小为8个数据位，1个停止位，无奇偶校验
-        Co2Manager.getInstance().init(this, "/dev/ttyS0", new SerialConnectListener() {
+        Co2Manager.getInstance().init(this, "/dev/ttyS0", new Co2ConnectListener() {
             @Override
             public void onSuccess() {
                 Log.e("init","onSuccess");
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_set_gas_compensations).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetGasCompensations(16, (byte) 0, (short) 0), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetGasCompensations(16,BalanceGasEnum.AIR , (short) 0), cmdReplyListener);
             }
 
 
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetCo2Unit((byte) 0), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetCo2Unit(CO2UnitEnum.mmHg), cmdReplyListener);
             }
 
 
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    CmdReplyListener cmdReplyListener = new CmdReplyListener() {
+    Co2CmdListener cmdReplyListener = new Co2CmdListener() {
         @Override
         public void onSuccess(byte cmd) {
             Log.e("CmdReply", "onSuccess");

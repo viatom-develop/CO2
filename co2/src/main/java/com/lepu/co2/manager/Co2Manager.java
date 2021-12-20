@@ -9,8 +9,8 @@ import androidx.annotation.NonNull;
 import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.lepu.co2.constant.Co2Constant;
 import com.lepu.co2.constant.Co2EventMsgConst;
-import com.lepu.co2.listener.CmdReplyListener;
-import com.lepu.co2.listener.SerialConnectListener;
+import com.lepu.co2.listener.Co2CmdListener;
+import com.lepu.co2.listener.Co2ConnectListener;
 import com.lepu.co2.obj.Co2Data;
 import com.lepu.co2.obj.Co2O2Data;
 import com.lepu.co2.obj.SerialMsg;
@@ -34,7 +34,7 @@ public class Co2Manager {
     //
     Context mContext;
     //请求命令回调
-    CmdReplyListener mCmdReplyListener;
+    Co2CmdListener mCmdReplyListener;
 
     public static Co2Manager getInstance() {
         if (instance == null) {
@@ -48,7 +48,7 @@ public class Co2Manager {
      * 数据以19200波特率传输，字节大小为8个数据位，1个停止位，无奇偶校验
      * @param devicePath 串口名 /dev/ttyS1
      */
-    public void init(Context context, String devicePath, SerialConnectListener serialConnentListener) {
+    public void init(Context context, String devicePath, Co2ConnectListener serialConnentListener) {
         AsyncTask.execute(() -> {
             try {
                 //     Log.d("SerialPortManager", "初始化串口");
@@ -118,7 +118,7 @@ public class Co2Manager {
     /**
      * 向串口写入数据
      */
-    public void serialSendData(byte[] bytes, CmdReplyListener cmdReplyListener) {
+    public void serialSendData(byte[] bytes, Co2CmdListener cmdReplyListener) {
         try {
         //    Log.e("tag","写入数据");
             mCmdReplyListener = cmdReplyListener;

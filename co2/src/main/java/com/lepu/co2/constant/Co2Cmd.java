@@ -89,10 +89,10 @@ public class Co2Cmd {
     /**
      * 8.3 7设置二氧化碳单位
      */
-    public static byte[] cmdSetCo2Unit(byte buf) {
+    public static byte[] cmdSetCo2Unit(CO2UnitEnum  co2UnitEnum) {
         byte[] data = new byte[2];
         data[0]=7;
-        data[1]= buf;
+        data[1]= co2UnitEnum.getValue();
 
         SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
         return msg.toBytes();
@@ -103,15 +103,15 @@ public class Co2Cmd {
     /**
      * 8.3 11设置补偿气体
      * @param O2Compensation  氧气补偿 1 % ( 0 – 100 % ) 默认16
-     * @param balanceGas       Default: 0 (room air)   room air= 0  , N2O = 1 , Helium= 2
+     * @param balanceGasEnum       Default: 0 (room air)   room air= 0  , N2O = 1 , Helium= 2
      * @param AnestheticAgent  默认 0  范围 0.1 % ( 0.0 – 20.0 % )
      * @return
      */
-    public static byte[] cmdSetGasCompensations(int  O2Compensation ,  byte balanceGas, short AnestheticAgent) {
+    public static byte[] cmdSetGasCompensations(int  O2Compensation , BalanceGasEnum balanceGasEnum, short AnestheticAgent) {
         byte[] data = new byte[5];
         data[0]=11;
         data[1]= (byte) O2Compensation;
-        data[2]= (byte)balanceGas;
+        data[2]= (byte) balanceGasEnum.getValue();
 
         data[3]= (byte) ((AnestheticAgent >> 7) & 0x7f); ;
         data[4]=  (byte) (AnestheticAgent& 0x7f);
