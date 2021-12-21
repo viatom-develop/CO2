@@ -16,12 +16,22 @@ public enum BalanceGasEnum {
         this.value = value;
     }
 
-    public String getStr() {
+    public String getKey() {
         return key;
     }
 
-
     public int getValue() {
         return value;
+    }
+
+
+    public static BalanceGasEnum getBalanceGasEnum(String key) {
+        if (key.equals(AIR.key)) {
+            return AIR;
+        } else if (key.equals(N20.key)) {
+            return N20;
+        } else {
+            return HE;
+        }
     }
 }

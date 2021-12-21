@@ -14,7 +14,7 @@ public enum CO2UnitEnum {
 
     CO2UnitEnum(String key,byte value) {
         this.key=key;
-        this.value=value;
+        this.value = value;
     }
 
     public String getKey() {
@@ -23,5 +23,15 @@ public enum CO2UnitEnum {
 
     public byte getValue() {
         return value;
+    }
+
+    public static CO2UnitEnum getCO2UnitEnum(String key) {
+        if (key.equals(mmHg.key)) {
+            return mmHg;
+        } else if (key.equals(KPa.key)) {
+            return KPa;
+        } else {
+            return percent;
+        }
     }
 }
