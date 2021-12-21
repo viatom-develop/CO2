@@ -57,9 +57,7 @@ public class Co2Cmd {
         return msg.toBytes();
     }
 
-    public static void main(String[] args) {
-        cmdSetBarometricPressure((short) 760);
-    }
+
 
     /**
      * 8.3 4设置气体温度 工作温度  单位
@@ -99,24 +97,29 @@ public class Co2Cmd {
     }
 
 
-
     /**
      * 8.3 11设置补偿气体
+     *
      * @param O2Compensation  氧气补偿 1 % ( 0 – 100 % ) 默认16
-     * @param balanceGasEnum       Default: 0 (room air)   room air= 0  , N2O = 1 , Helium= 2
-     * @param AnestheticAgent  默认 0  范围 0.1 % ( 0.0 – 20.0 % )
+     * @param balanceGasEnum  平衡气   Default: 0 (room air)   room air= 0  , N2O = 1 , Helium= 2
+     * @param anestheticAgent 麻醉剂 默认 0  范围 0.1 % ( 0.0 – 20.0 % )
      * @return
      */
-    public static byte[] cmdSetGasCompensations(int  O2Compensation , BalanceGasEnum balanceGasEnum, short AnestheticAgent) {
+    public static byte[] cmdSetGasCompensations(int O2Compensation, BalanceGasEnum balanceGasEnum, double anestheticAgent) {
         byte[] data = new byte[5];
-        data[0]=11;
-        data[1]= (byte) O2Compensation;
-        data[2]= (byte) balanceGasEnum.getValue();
-
-        data[3]= (byte) ((AnestheticAgent >> 7) & 0x7f); ;
-        data[4]=  (byte) (AnestheticAgent& 0x7f);
+        data[0] = 11;
+        data[1] = (byte) O2Compensation;
+        data[2] = (byte) balanceGasEnum.getValue();
+        short ag = (short) (anestheticAgent * 10);
+        data[3] = (byte) ((ag >> 7) & 0x7f);
+        ;
+        data[4] = (byte) (ag & 0x7f);
         SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
         return msg.toBytes();
+    }
+
+    public static void main(String[] args) {
+        cmdSetGasCompensations(40, BalanceGasEnum.N20, 3.5);
     }
 
 
