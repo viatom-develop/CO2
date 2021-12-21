@@ -8,16 +8,16 @@ public enum BalanceGasEnum {
     N20("N20", 1),
     HE("He", 2);
 
-    String str;
+    String key;
     int value;
 
-    BalanceGasEnum(String str, int value) {
-        this.str = str;
+    BalanceGasEnum(String key, int value) {
+        this.key = key;
         this.value = value;
     }
 
     public String getStr() {
-        return str;
+        return key;
     }
 
 

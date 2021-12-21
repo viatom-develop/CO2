@@ -17,6 +17,10 @@ public enum CO2UnitEnum {
         this.value=value;
     }
 
+    public String getKey() {
+        return key;
+    }
+
     public byte getValue() {
         return value;
     }

@@ -8,16 +8,16 @@ public enum TimePeriodEnum {
     TimePeriod10S("10S", 10),
     TimePeriod20S("20S", 20);
 
-    String str;
+    String key;
     int value;
 
-    TimePeriodEnum(String str, int value) {
-        this.str = str;
+    TimePeriodEnum(String key, int value) {
+        this.key = key;
         this.value = value;
     }
 
     public String getStr() {
-        return str;
+        return key;
     }
 
 
