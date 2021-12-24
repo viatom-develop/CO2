@@ -37,4 +37,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     implementation project(path: ':co2')
+    // LiveEventBus : https://github.com/JeremyLiao/LiveEventBus
+    // https://juejin.im/post/6844903647554306056
+    implementation 'com.jeremyliao:live-event-bus-x:1.7.3'
 }

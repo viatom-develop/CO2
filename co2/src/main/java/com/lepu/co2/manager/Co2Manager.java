@@ -13,6 +13,7 @@ import com.lepu.co2.listener.Co2CmdListener;
 import com.lepu.co2.listener.Co2ConnectListener;
 import com.lepu.co2.obj.Co2Data;
 import com.lepu.co2.obj.Co2O2Data;
+import com.lepu.co2.obj.NACK;
 import com.lepu.co2.obj.SerialMsg;
 import com.lepu.co2.uitl.ByteUtils;
 import com.lepu.co2.uitl.ChecksumUtil;
@@ -229,12 +230,15 @@ public class Co2Manager {
 
             break;
             case Co2Constant.TYPE_Capnostat_Zero_Command: {
-                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Capnostat_Zero_Command);
-
+                if (mCmdReplyListener!=null){
+                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Capnostat_Zero_Command);
+                }
             }
             break;
             case Co2Constant.TYPE_Get_Set_Sensor_Settings: {
-                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Get_Set_Sensor_Settings);
+                if (mCmdReplyListener!=null){
+                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Get_Set_Sensor_Settings);
+                }
             }
             break;
             case Co2Constant.TYPE_CO2_O2_Waveform_Mode: {
@@ -243,28 +247,42 @@ public class Co2Manager {
             }
             break;
             case Co2Constant.TYPE_NACK_Error: {
+                //
+                NACK nack=new NACK(serialMsg.getContent());
+                LiveEventBus.get(Co2EventMsgConst.MsgCo2NICK).post(nack );
 
-            //    mCmdReplyListener.onSuccess(Co2Constant.TYPE_NACK_Error);
+                // mCmdReplyListener.onSuccess(Co2Constant.TYPE_NACK_Error);
             }
             break;
             case Co2Constant.TYPE_Stop_Continuous_Mode: {
-                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Stop_Continuous_Mode);
+                if (mCmdReplyListener!=null){
+                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Stop_Continuous_Mode);
+                }
             }
             break;
             case Co2Constant.TYPE_GET_SOFTWARE_REVISION: {
-                mCmdReplyListener.onSuccess(Co2Constant.TYPE_GET_SOFTWARE_REVISION);
+                if (mCmdReplyListener!=null){
+                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_GET_SOFTWARE_REVISION);
+                }
             }
             break;
             case Co2Constant.TYPE_Sensor_Capabilities: {
-                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Sensor_Capabilities);
+                if (mCmdReplyListener!=null){
+                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Sensor_Capabilities);
+                }
             }
             break;
             case Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag: {
-                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag);
+                if (mCmdReplyListener!=null){
+                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag);
+                }
             }
             break;
             case Co2Constant.TYPE_Reset_Capnostat: {
-                mCmdReplyListener.onSuccess(Co2Constant.TYPE_Reset_Capnostat);
+                if (mCmdReplyListener!=null){
+                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Reset_Capnostat);
+                }
+
             }
             break;
             default:

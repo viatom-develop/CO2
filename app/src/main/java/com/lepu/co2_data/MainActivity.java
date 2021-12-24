@@ -1,19 +1,25 @@
 package com.lepu.co2_data;
 
+import static java.lang.Thread.sleep;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
+import com.jeremyliao.liveeventbus.LiveEventBus;
+import com.lepu.co2.constant.Co2Cmd;
+import com.lepu.co2.constant.Co2EventMsgConst;
 import com.lepu.co2.enums.BalanceGasEnum;
 import com.lepu.co2.enums.CO2UnitEnum;
-import com.lepu.co2.constant.Co2Cmd;
 import com.lepu.co2.enums.SleepModeEnum;
 import com.lepu.co2.enums.TimePeriodEnum;
 import com.lepu.co2.listener.Co2CmdListener;
 import com.lepu.co2.listener.Co2ConnectListener;
 import com.lepu.co2.manager.Co2Manager;
+import com.lepu.co2.obj.NACK;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -163,6 +169,31 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+        LiveEventBus.get(Co2EventMsgConst.MsgCo2NICK).observeForever(new Observer<Object>() {
+            @Override
+            public void onChanged(Object o) {
+                NACK n = (NACK) o;
+                Log.e("NACK",n.getNackcebEnum().name());
+            }
+        });
+
+        RR r=new RR();
+        r.run();
+
+
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     Co2CmdListener cmdReplyListener = new Co2CmdListener() {
@@ -181,4 +212,19 @@ public class MainActivity extends AppCompatActivity {
             Log.e("CmdReply", "onTimeOut");
         }
     };
+
+    public class RR implements Runnable{
+        @Override
+        public void run() {
+            Log.e("rr...","rrrr");
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        public void finsh(){
+
+        }
+    }
 }
