@@ -217,7 +217,7 @@ public class Co2Manager {
         SerialMsg serialMsg= new SerialMsg(buf);
         switch (serialMsg.getType()) {
             case Co2Constant.TYPE_Waveform_Data_Mode: {
-                Co2Data co2Data=new Co2Data(serialMsg.getContent());
+                Co2Data co2Data=new Co2Data(buf,serialMsg.getContent());
                 LiveEventBus.get(Co2EventMsgConst.MsgCo2Data).post(co2Data);
                 }
 
@@ -291,7 +291,10 @@ public class Co2Manager {
         Co2Constant.IS_TEST_DATA = testMode;
     }
 
+    //记录读到文件的坐标
     int fileindex = 0;
+    //一次读取多少
+    int readAmount=60;
 
     /**
      * 发送测试数据
@@ -305,15 +308,15 @@ public class Co2Manager {
             }
             //要发送的数据
             int ecgdataLength = 0;
-            if (500 > (ecgTestData.length - fileindex)) {
+            if (readAmount > (ecgTestData.length - fileindex)) {
                 ecgdataLength = ecgTestData.length - fileindex;
             } else {
-                ecgdataLength = 500;
+                ecgdataLength = readAmount;
             }
             byte[] ecgdata = new byte[ecgdataLength];
             System.arraycopy(ecgTestData, fileindex, ecgdata, 0, ecgdataLength);
-            fileindex = fileindex + 500;
-            if (ecgdata.length<500){
+            fileindex = fileindex + readAmount;
+            if (ecgdata.length<readAmount){
                 fileindex=0;
             }
             dataProcess(ecgdata);

@@ -56,11 +56,11 @@ public class Co2Data {
     /**
      * 原始数据用于保存
      */
-    byte[] buf;
+    byte[] originalData;
 
 
-    public Co2Data(byte[] buf) {
-        this.buf = buf;
+    public Co2Data(byte[] originalData,byte[] buf) {
+        this.originalData = originalData;
         SYNC = buf[0];
 
         co2Wave = (short) (((buf[2] & 0xFF) | (short) (buf[1] << 7))-1000);
@@ -175,14 +175,13 @@ public class Co2Data {
         HardwareStatus = hardwareStatus;
     }
 
-    public byte[] getBuf() {
-        return buf;
+    public byte[] getOriginalData() {
+        return originalData;
     }
 
-    public void setBuf(byte[] buf) {
-        this.buf = buf;
+    public void setOriginalData(byte[] originalData) {
+        this.originalData = originalData;
     }
-
 
     public static void main(String[] args) {
         int a = 2 ^ 7;

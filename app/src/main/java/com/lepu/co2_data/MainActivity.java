@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     File file = FileUtils.createFile(Environment.getExternalStorageDirectory().getAbsolutePath(),"co2data.DAT");
     boolean getDataToFile=false;
 
-
+    int co2Index=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,11 +223,15 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (n.getDPI()==3){
                     Log.e("Co2Data RR==","RespRate=="+n.getRespRate());
+                }
 
+                co2Index++;
+                if (co2Index % 100 == 0) {
+                    Log.e("收到1秒数据","-------------------------");
                 }
 
                 if (getDataToFile){
-                    FileUtils.write2File(file,n.getBuf());
+                    FileUtils.write2File(file,n.getOriginalData());
                 }
 
             }
