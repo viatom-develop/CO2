@@ -3,6 +3,7 @@ package com.lepu.co2_data;
 import static java.lang.Thread.sleep;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
@@ -19,9 +20,16 @@ import com.lepu.co2.enums.TimePeriodEnum;
 import com.lepu.co2.listener.Co2CmdListener;
 import com.lepu.co2.listener.Co2ConnectListener;
 import com.lepu.co2.manager.Co2Manager;
+import com.lepu.co2.obj.Co2Data;
 import com.lepu.co2.obj.NACK;
+import com.lepu.co2.uitl.FileUtils;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
+    File file = FileUtils.createFile(Environment.getExternalStorageDirectory().getAbsolutePath(),"co2data.DAT");
+    boolean getDataToFile=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         //睡眠模式
         findViewById(R.id.btn_sleep_mode).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +177,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //采集数据到文件
+        findViewById(R.id.btn_get_data_to_file).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDataToFile=true;
+            }
+        });
+
+
+        // 测试模式
+        findViewById(R.id. btn_test_mode).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Co2Manager.getInstance().setTestMode(true);
+            }
+        });
+        //正式模式
+        findViewById(R.id.btn_formal_mode ).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Co2Manager.getInstance().setTestMode(false);
+            }
+        });
+
+
 
         LiveEventBus.get(Co2EventMsgConst.MsgCo2NICK).observeForever(new Observer<Object>() {
             @Override
@@ -179,21 +211,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        RR r=new RR();
-        r.run();
 
 
-        new Thread(){
+        LiveEventBus.get(Co2EventMsgConst.MsgCo2Data).observeForever(new Observer<Object>() {
             @Override
-            public void run() {
-                super.run();
-                try {
-                    sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            public void onChanged(Object o) {
+                Co2Data n = (Co2Data) o;
+                Log.e("Co2Data",n.getCo2Wave()+"");
+                if (n.getDPI()==2){
+                    Log.e("Co2Data==",n.getETCO2()+"");
                 }
+                if (n.getDPI()==3){
+                    Log.e("Co2Data RR==","RespRate=="+n.getRespRate());
+
+                }
+
+                if (getDataToFile){
+                    FileUtils.write2File(file,n.getBuf());
+                }
+
             }
-        }.start();
+        });
+
+
     }
 
     Co2CmdListener cmdReplyListener = new Co2CmdListener() {
@@ -213,18 +253,5 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public class RR implements Runnable{
-        @Override
-        public void run() {
-            Log.e("rr...","rrrr");
-            try {
-                sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        public void finsh(){
 
-        }
-    }
 }

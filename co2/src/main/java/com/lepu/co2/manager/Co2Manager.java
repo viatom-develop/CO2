@@ -37,6 +37,9 @@ public class Co2Manager {
     //请求命令回调
     Co2CmdListener mCmdReplyListener;
 
+    //
+    byte[] ecgTestData = new byte[0];
+
     public static Co2Manager getInstance() {
         if (instance == null) {
             instance = new Co2Manager();
@@ -89,23 +92,15 @@ public class Co2Manager {
             mScheduledThreadPoolExecutor.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-            //        Log.e("buffer",  "读取数据");
                     try {
                         if (Co2Constant.IS_TEST_DATA) {//测试模式
-                            //测试数据
-                            //    sendTestEcgData();
                             //昨天采集的数据
-                      //      sendTestEcgDataFile();
-                     //       Log.e("buffer",  "测试数据");
+                            sendTestEcgDataFile();
                         } else {//正式数据
                             if (mInputStream == null) return;
                             byte[] buffer = ByteUtils.readStream(mInputStream);
-
-
-                   //         Log.e("buffer",  "接收完成");
                             //处理数据
                             dataProcess(buffer);
-
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -220,8 +215,6 @@ public class Co2Manager {
 
     public void distributeMsg(@NonNull byte[] buf) {
         SerialMsg serialMsg= new SerialMsg(buf);
-
-
         switch (serialMsg.getType()) {
             case Co2Constant.TYPE_Waveform_Data_Mode: {
                 Co2Data co2Data=new Co2Data(serialMsg.getContent());
@@ -247,7 +240,7 @@ public class Co2Manager {
             }
             break;
             case Co2Constant.TYPE_NACK_Error: {
-                //
+                //错误信息
                 NACK nack=new NACK(serialMsg.getContent());
                 LiveEventBus.get(Co2EventMsgConst.MsgCo2NICK).post(nack );
 
@@ -289,7 +282,51 @@ public class Co2Manager {
         }
     }
 
+    /**
+     * 设置测试模式
+     *
+     * @param testMode
+     */
+    public void setTestMode(boolean testMode) {
+        Co2Constant.IS_TEST_DATA = testMode;
+    }
 
+    int fileindex = 0;
+
+    /**
+     * 发送测试数据
+     */
+    private void sendTestEcgDataFile() {
+
+
+        try {
+            if (ecgTestData.length == 0) {
+                ecgTestData = ByteUtils.getFromAssets(mContext);
+            }
+            //要发送的数据
+            int ecgdataLength = 0;
+            if (500 > (ecgTestData.length - fileindex)) {
+                ecgdataLength = ecgTestData.length - fileindex;
+            } else {
+                ecgdataLength = 500;
+            }
+            byte[] ecgdata = new byte[ecgdataLength];
+            System.arraycopy(ecgTestData, fileindex, ecgdata, 0, ecgdataLength);
+            fileindex = fileindex + 500;
+            if (ecgdata.length<500){
+                fileindex=0;
+            }
+            dataProcess(ecgdata);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        // Log.d("noTask", "单组处理时间发送时间" + (System.currentTimeMillis() - gettasktime)+"---"+mTestEcgIndex+"---");
+
+
+    }
     public static void main(String[] args) {
         byte b = (byte) 80;
 

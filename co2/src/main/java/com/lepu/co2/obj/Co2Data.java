@@ -1,9 +1,6 @@
 package com.lepu.co2.obj;
 
-import android.util.Log;
-
 import com.lepu.co2.enums.PrioritizedCO2Status;
-import com.lepu.co2.uitl.ByteUtils;
 
 import java.util.Arrays;
 
@@ -33,40 +30,42 @@ public class Co2Data {
     PrioritizedCO2Status CO2Status;
 
     /**
-     *ETCO2 x101  当DPI等于2的时候有效 ETCO2 = (DB1 * 2^7) + DB
+     * ETCO2 x101  当DPI等于2的时候有效 ETCO2 = (DB1 * 2^7) + DB
      */
     int ETCO2;
 
     /**
-     *  呼吸频率 当DPI等于3的时候有效 RespRate = (DB1 * 2^7) + DB2
+     * 呼吸频率 当DPI等于3的时候有效 RespRate = (DB1 * 2^7) + DB2
      */
-    int respirationRate;
+    int respRate;
 
     /**
-     *  吸入气二氧化碳浓度 CO2 x10^1 当DPI等于4的时候有效 Insp CO2 = (DB1 * 2^7) + DB2
+     * 吸入气二氧化碳浓度 CO2 x10^1 当DPI等于4的时候有效 Insp CO2 = (DB1 * 2^7) + DB2
      */
     int InspiredCO2;
 
     /**
-     *  呼吸检测标志 当DPI等于5的时候有效
+     * 呼吸检测标志 当DPI等于5的时候有效
      */
     boolean BreathDetectedFlag;
 
     /**
-     *  硬件状态 仅在非零时发送。 见附录  当DPI等于7的时候有效
+     * 硬件状态 仅在非零时发送。 见附录  当DPI等于7的时候有效
      */
     HardwareStatus HardwareStatus;
-
+    /**
+     * 原始数据用于保存
+     */
     byte[] buf;
 
 
-    public Co2Data(byte[] buf){
-        this.buf=buf;
-        SYNC=buf[0];
+    public Co2Data(byte[] buf) {
+        this.buf = buf;
+        SYNC = buf[0];
 
-            co2Wave= (short) ((( 128 * buf[1]) + buf[2])-1000);
-          //  Log.e("co2Wave===",(co2Wave*0.01)+"");
-        if (buf.length>3){
+        co2Wave = (short) (((buf[2] & 0xFF) | (short) (buf[1] << 7))-1000);
+
+        if (buf.length > 3) {
             DPI=buf[3];
             if (DPI!=0){
                 switch (DPI){
@@ -75,23 +74,23 @@ public class Co2Data {
                     }
                     break;
                     case 2:{
-                        ETCO2=  ( ( 128 * buf[4] ) + buf[5] );
+                        ETCO2= ((buf[5] & 0xFF) | (short) (buf[4] << 7));
                     }
                     break;
                     case 3:{
-                        respirationRate = (buf[4] * 2^7) + buf[5];
+                        respRate = ((buf[5] & 0xFF) | (short) (buf[4] << 7));
                     }
                     break;
                     case 4:{
-                        InspiredCO2  = ( ( 128 * buf[4] ) + buf[5] );
+                        InspiredCO2  = ((buf[5] & 0xFF) | (short) (buf[4] << 7));
                     }
                     break;
                     case 5:{
-                          BreathDetectedFlag = true;
+                        BreathDetectedFlag = true;
                     }
                     break;
                     case 7:{
-                       HardwareStatus=new HardwareStatus(buf[4], buf[5]);
+                        HardwareStatus=new HardwareStatus(buf[4], buf[5]);
                     }
                     break;
 
@@ -102,7 +101,14 @@ public class Co2Data {
         }
 
 
+    }
 
+    public int getRespRate() {
+        return respRate;
+    }
+
+    public void setRespRate(int respRate) {
+        this.respRate = respRate;
     }
 
     public int getSYNC() {
@@ -145,14 +151,6 @@ public class Co2Data {
         this.ETCO2 = ETCO2;
     }
 
-    public int getRespirationRate() {
-        return respirationRate;
-    }
-
-    public void setRespirationRate(int respirationRate) {
-        this.respirationRate = respirationRate;
-    }
-
     public int getInspiredCO2() {
         return InspiredCO2;
     }
@@ -185,19 +183,9 @@ public class Co2Data {
         this.buf = buf;
     }
 
-    @Override
-    public String toString() {
-        return "Co2Data{" +
-                "SYNC=" + SYNC +
-                ", co2Wave=" + co2Wave +
-                ", DPI=" + DPI +
-                ", CO2Status=" + CO2Status +
-                ", ETCO2=" + ETCO2 +
-                ", respirationRate=" + respirationRate +
-                ", InspiredCO2=" + InspiredCO2 +
-                ", BreathDetectedFlag=" + BreathDetectedFlag +
-                ", HardwareStatus=" + HardwareStatus +
-                ", buf=" + Arrays.toString(buf) +
-                '}';
+
+    public static void main(String[] args) {
+        int a = 2 ^ 7;
+        System.out.println(a + "");
     }
 }
