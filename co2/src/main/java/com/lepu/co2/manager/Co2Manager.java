@@ -32,13 +32,14 @@ public class Co2Manager {
     OutputStream mOutputStream;
     //单例
     private static Co2Manager instance = null;
-    //
+    //上下文
     Context mContext;
     //请求命令回调
     Co2CmdListener mCmdReplyListener;
-
-    //
-    byte[] ecgTestData = new byte[0];
+    //连接状态 0为插入 1为拔出 这个值有上位机控制 这里默认为拔出
+    int connectType=1;
+    //测试数据
+    byte[] co2TestData = new byte[0];
 
     public static Co2Manager getInstance() {
         if (instance == null) {
@@ -96,7 +97,7 @@ public class Co2Manager {
                         if (Co2Constant.IS_TEST_DATA) {//测试模式
                             //昨天采集的数据
                             sendTestEcgDataFile();
-                        } else {//正式数据
+                        } else if (connectType==0){//正式数据
                             if (mInputStream == null) return;
                             byte[] buffer = ByteUtils.readStream(mInputStream);
                             //处理数据
@@ -303,18 +304,18 @@ public class Co2Manager {
 
 
         try {
-            if (ecgTestData.length == 0) {
-                ecgTestData = ByteUtils.getFromAssets(mContext);
+            if (co2TestData.length == 0) {
+                co2TestData = ByteUtils.getFromAssets(mContext);
             }
             //要发送的数据
             int ecgdataLength = 0;
-            if (readAmount > (ecgTestData.length - fileindex)) {
-                ecgdataLength = ecgTestData.length - fileindex;
+            if (readAmount > (co2TestData.length - fileindex)) {
+                ecgdataLength = co2TestData.length - fileindex;
             } else {
                 ecgdataLength = readAmount;
             }
             byte[] ecgdata = new byte[ecgdataLength];
-            System.arraycopy(ecgTestData, fileindex, ecgdata, 0, ecgdataLength);
+            System.arraycopy(co2TestData, fileindex, ecgdata, 0, ecgdataLength);
             fileindex = fileindex + readAmount;
             if (ecgdata.length<readAmount){
                 fileindex=0;
@@ -332,7 +333,13 @@ public class Co2Manager {
     }
     public static void main(String[] args) {
         byte b = (byte) 80;
+    }
 
+    public int getConnectType() {
+        return connectType;
+    }
 
+    public void setConnectType(int connectType) {
+        this.connectType = connectType;
     }
 }
