@@ -58,8 +58,10 @@ public class Co2Data {
      */
     byte[] originalData;
 
+    public Co2Data() {
+    }
 
-    public Co2Data(byte[] originalData,byte[] buf) {
+    public Co2Data(byte[] originalData, byte[] buf) {
         this.originalData = originalData;
         SYNC = buf[0];
 
