@@ -8,6 +8,10 @@ import com.lepu.co2.obj.SerialMsg;
 import com.lepu.co2.uitl.ByteUtils;
 import com.lepu.co2.uitl.ChecksumUtil;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * 串口命令合成
@@ -118,9 +122,11 @@ public class Co2Cmd {
         return msg.toBytes();
     }
 
+/*
     public static void main(String[] args) {
         cmdSetGasCompensations(40, BalanceGasEnum.N20, 3.5);
     }
+*/
 
 
     /**
@@ -224,5 +230,35 @@ public class Co2Cmd {
     }
 
 
+    public static void main(String[] args) {
+
+   /*  short[] a=new short[]{10};
+     short[] b=new short[0];
+     System.arraycopy( );
+     a[0]=20;
+     System.out.println(b[0]+"");*/
+     /*   float f=0.1f;
+        while (f<10){
+          //  f+=0.1;
+            f=new BigDecimal(Float.toString(f)).add(new BigDecimal(Float.toString(0.1f))).floatValue();
+
+            System.out.println(f+"");
+        }
+*/
+
+        List<String> mList=new ArrayList<>();
+        mList.add("1");
+        mList.add("2");
+        mList.add("3");
+        mList.add(0,"4");
+        List<String> b=new ArrayList<>();
+        b.add("5");
+        b.add("6");
+        mList.addAll(0,b);
+        for (int i=0;i<mList.size();i++){
+            System.out.println(mList.get(i));
+        } 
+
+    }
 
 }

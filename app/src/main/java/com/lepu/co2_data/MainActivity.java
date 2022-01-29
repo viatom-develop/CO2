@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
        // 数据以19200波特率传输，字节大小为8个数据位，1个停止位，无奇偶校验
         Co2Manager.getInstance().init(this, "/dev/ttyS0", new Co2ConnectListener() {
             @Override
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("init","onFail");
             }
         });
-
+        Co2Manager.getInstance().setConnectType(0);
         //停止传输命令
         findViewById(R.id.btn_stop_continuous_mode).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_set_time_period).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetTimePeriod(TimePeriodEnum.TimePeriod1B), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetTimePeriod(TimePeriodEnum.TimePeriod10S), cmdReplyListener);
             }
 
 

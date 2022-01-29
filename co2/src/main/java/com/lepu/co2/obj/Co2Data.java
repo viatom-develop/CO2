@@ -1,5 +1,7 @@
 package com.lepu.co2.obj;
 
+import android.util.Log;
+
 import com.lepu.co2.enums.PrioritizedCO2Status;
 
 import java.util.Arrays;
@@ -27,7 +29,7 @@ public class Co2Data {
     /**
      * 二氧化碳状态 当DPI等于1的时候有效
      */
-    PrioritizedCO2Status CO2Status;
+ //   PrioritizedCO2Status CO2Status;
 
     /**
      * ETCO2 x101  当DPI等于2的时候有效 ETCO2 = (DB1 * 2^7) + DB
@@ -57,6 +59,10 @@ public class Co2Data {
      * 原始数据用于保存
      */
     byte[] originalData;
+    /**
+     *二氧化碳状态 当DPI等于1的时候有效
+     */
+    CO2Status co2Status;
 
     public Co2Data() {
     }
@@ -72,7 +78,8 @@ public class Co2Data {
             if (DPI!=0){
                 switch (DPI){
                     case 1:{
-                        CO2Status=PrioritizedCO2Status.getPrioritizedCO2Status(buf[8]);
+                        co2Status=new CO2Status(buf);
+                        Log.e("LZD",co2Status.toString());
                     }
                     break;
                     case 2:{
@@ -137,12 +144,12 @@ public class Co2Data {
         this.DPI = DPI;
     }
 
-    public PrioritizedCO2Status getCO2Status() {
-        return CO2Status;
+    public CO2Status getCo2Status() {
+        return co2Status;
     }
 
-    public void setCO2Status(PrioritizedCO2Status CO2Status) {
-        this.CO2Status = CO2Status;
+    public void setCo2Status(CO2Status co2Status) {
+        this.co2Status = co2Status;
     }
 
     public int getETCO2() {
