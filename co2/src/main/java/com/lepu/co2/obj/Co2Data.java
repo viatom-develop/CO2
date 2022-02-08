@@ -79,7 +79,7 @@ public class Co2Data {
                 switch (DPI){
                     case 1:{
                         co2Status=new CO2Status(buf);
-                        Log.e("LZD",co2Status.toString());
+             //           Log.e("LZD",co2Status.toString());
                     }
                     break;
                     case 2:{

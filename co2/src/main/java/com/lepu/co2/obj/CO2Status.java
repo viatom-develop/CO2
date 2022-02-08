@@ -47,7 +47,7 @@ public class CO2Status {
     /**
      * Capnostat 在过去 20 秒内检测到呼吸，同时尝试 Capnostat 归零。
      */
-    int BreathsDetected;
+    int  BreathsDetected;
 
     /**
      * 通常是当气道适配器从 Capnostat 上取下时或当气道适配器的窗口出现光学阻塞时引起的。 也可能是由于更改适配器类型时未能执行 Capnostat 归零造成的。
