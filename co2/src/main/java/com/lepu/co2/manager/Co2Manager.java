@@ -102,9 +102,9 @@ public class Co2Manager {
                         } else if (connectType==0){//正式数据
                             if (mInputStream == null) return;
                             byte[] buffer = ByteUtils.readStream(mInputStream);
-                            Log.e("lzd 2 接到数据", Arrays.toString(buffer));
+                          //  Log.e("lzd 2 接到数据", Arrays.toString(buffer));
                             //处理数据
-                          //  dataProcess(buffer);
+                            dataProcess(buffer);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
