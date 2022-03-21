@@ -37,11 +37,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+
+
        // 数据以19200波特率传输，字节大小为8个数据位，1个停止位，无奇偶校验
         Co2Manager.getInstance().init(this, "/dev/ttyS0", new Co2ConnectListener() {
             @Override
             public void onSuccess() {
-                Log.e("init","onSuccess");
+                 Log.e("init","onSuccess");
+
+                new Thread(){
+                    @Override
+                    public void run() {
+                        super.run();
+                        while (true){
+                        try {
+                            sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                            Log.e("lzd 1","发送数据");
+                        Co2Manager.getInstance().serialSendData(new byte[]{1}, cmdReplyListener);
+                        }
+                    }
+                }.start();
             }
 
             @Override

@@ -2,7 +2,7 @@ package com.lepu.co2.obj;
 
 import com.lepu.co2.enums.CO2CalibrationStatus;
 import com.lepu.co2.enums.CO2SourceCurrent;
-import com.lepu.co2.enums.CO2TemperatureStatusEnem;
+import com.lepu.co2.enums.CO2TemperatureStatusEnum;
 
 /**
  * CO2状态 在DPI等于1的时候 有值
@@ -81,7 +81,7 @@ public class CO2Status {
     /**
      * 温度状态
      */
-    CO2TemperatureStatusEnem temperatureStatus;
+    CO2TemperatureStatusEnum temperatureStatus;
 
     /**
      * 校验和错误
@@ -110,6 +110,40 @@ public class CO2Status {
      * 未检测到侧流适配器
      */
      int SidestreamAdapterNotDetected;
+
+    /**
+     * 默认构造函数 一切正常
+     */
+    public CO2Status() {
+        Sync = 0;
+        breathsFlag = 0;
+        inSleepMode = 0;
+        CO2SensorNOTReadytoZero = 0;
+        CO2OutofRange = 0;
+        BreathsDetected = 0;
+        CheckAdapter =0;
+        NegativeCO2Error =0;
+        //源电流
+        sourceCurrent = CO2SourceCurrent.SOURCE_CURRENT_NORMAL;
+        CompensationNotYetSet =0;
+        //校准状态
+        calibrationStatus = CO2CalibrationStatus.NO_ZEROING_IN_PROGRESS;
+        //温度状态
+        temperatureStatus = CO2TemperatureStatusEnum.STABLE_AT_OPERATING_TEMPERATURE;
+        //校验和错误
+        checksumFaulty = 0;
+        //硬件错误
+        hardwareError = 0;
+        //该位在采样泵关闭时置位
+        PumpOff = 0;
+        //气动系统错误
+        PneumaticSystemError =0;
+        //超出泵寿命
+        pumpLifeExceeded = 0;
+        //未检测到侧流适配器
+        SidestreamAdapterNotDetected= 0;
+
+    }
 
     /**
      * @param buf
@@ -154,13 +188,13 @@ public class CO2Status {
         int buf5_1 = buf[5] >> 1 & 0x1;
         int buf5_0 = buf[5] >> 0 & 0x1;
         if (buf5_1 == 0 && buf5_0 == 0) {
-            temperatureStatus = CO2TemperatureStatusEnem.STABLE_AT_OPERATING_TEMPERATURE;
+            temperatureStatus = CO2TemperatureStatusEnum.STABLE_AT_OPERATING_TEMPERATURE;
         } else if (buf5_1 == 0 && buf5_0 == 1) {
-            temperatureStatus = CO2TemperatureStatusEnem.BELOW_OPERATING_TEMPERATURE;
+            temperatureStatus = CO2TemperatureStatusEnum.BELOW_OPERATING_TEMPERATURE;
         } else if (buf5_1 == 1 && buf5_0 == 0) {
-            temperatureStatus = CO2TemperatureStatusEnem.ABOVE_OPERATING_TEMPERATURE;
+            temperatureStatus = CO2TemperatureStatusEnum.ABOVE_OPERATING_TEMPERATURE;
         } else if (buf5_1 == 1 && buf5_0 == 1) {
-            temperatureStatus = CO2TemperatureStatusEnem.TEMPERATURE_UNSTABLE;
+            temperatureStatus = CO2TemperatureStatusEnum.TEMPERATURE_UNSTABLE;
         }
         //校验和错误
         checksumFaulty = buf[6] >> 6 & 0x1;
@@ -266,11 +300,11 @@ public class CO2Status {
         this.calibrationStatus = calibrationStatus;
     }
 
-    public CO2TemperatureStatusEnem getTemperatureStatus() {
+    public CO2TemperatureStatusEnum getTemperatureStatus() {
         return temperatureStatus;
     }
 
-    public void setTemperatureStatus(CO2TemperatureStatusEnem temperatureStatus) {
+    public void setTemperatureStatus(CO2TemperatureStatusEnum temperatureStatus) {
         this.temperatureStatus = temperatureStatus;
     }
 

@@ -3,6 +3,7 @@ package com.lepu.co2.manager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.serialport.SerialPort;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -21,6 +22,7 @@ import com.lepu.co2.uitl.ChecksumUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -100,8 +102,9 @@ public class Co2Manager {
                         } else if (connectType==0){//正式数据
                             if (mInputStream == null) return;
                             byte[] buffer = ByteUtils.readStream(mInputStream);
+                            Log.e("lzd 2 接到数据", Arrays.toString(buffer));
                             //处理数据
-                            dataProcess(buffer);
+                          //  dataProcess(buffer);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
