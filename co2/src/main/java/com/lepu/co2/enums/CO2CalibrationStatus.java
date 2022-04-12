@@ -29,7 +29,10 @@ public enum CO2CalibrationStatus {
      */
     ZERO_REQUIRED_ZERO_ERROR,
 
-
+    /**
+     * 未知
+     */
+    UN_KNOW
 
 
 

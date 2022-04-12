@@ -124,12 +124,12 @@ public class CO2Status {
         CheckAdapter =0;
         NegativeCO2Error =0;
         //源电流
-        sourceCurrent = CO2SourceCurrent.SOURCE_CURRENT_NORMAL;
+        sourceCurrent = CO2SourceCurrent.UN_KNOW;
         CompensationNotYetSet =0;
         //校准状态
-        calibrationStatus = CO2CalibrationStatus.NO_ZEROING_IN_PROGRESS;
+        calibrationStatus = CO2CalibrationStatus.UN_KNOW;
         //温度状态
-        temperatureStatus = CO2TemperatureStatusEnum.STABLE_AT_OPERATING_TEMPERATURE;
+        temperatureStatus = CO2TemperatureStatusEnum.UN_KNOW;
         //校验和错误
         checksumFaulty = 0;
         //硬件错误

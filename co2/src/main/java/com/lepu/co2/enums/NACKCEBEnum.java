@@ -44,7 +44,12 @@ public enum NACKCEBEnum {
      * 系统故障 当系统处于非功能状态时会发生这种情况
      * 由于系统故障。所有命令都将被忽略。
      */
-    SystemFaulty2;
+    SystemFaulty2,
+
+    /**
+     * 未知
+     */
+    UN_KNOW;
 
 
     public static NACKCEBEnum NCAKCEBEnum(int CBE) {

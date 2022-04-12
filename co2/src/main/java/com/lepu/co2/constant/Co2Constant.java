@@ -5,10 +5,6 @@ public class Co2Constant {
     public static int CMD_TIMEOUT=1000;
 
     /**
-     * 是否是测试数据
-     */
-    public static boolean IS_TEST_DATA = false;
-    /**
      * CO2 波形模式命令以 100 Hz 的速率发送。 该命令用于
      * 传输 CO2 波形和数据。 每当无法计算 CO2 波形时，
      * 最小 CO2 值 (-10.00) 作为波形“penlift”发送（参见第 6.4.2 节）。 这

@@ -62,8 +62,11 @@ public enum PrioritizedCO2Status {
      * 如果有粘液或湿气，则清除、清洁气道适配器
      * 看到了。 如果适配器干净，请执行 Capnostat 调零。
      */
-    CheckAirwayAdapter((byte) 0x09, 10);
-
+    CheckAirwayAdapter((byte) 0x09, 10),
+    /**
+     * 未知
+     */
+    UN_KNOW((byte) 0x11, 11);
 
     byte key;
     int priority;

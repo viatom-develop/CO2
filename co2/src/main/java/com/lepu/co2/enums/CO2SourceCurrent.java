@@ -19,8 +19,11 @@ public enum CO2SourceCurrent {
     /**
      *源电流限制误差。 通过源的电流超出操作规范。
      */
-    SOURCE_CURRENT_LIMIT_ERROR
-
+    SOURCE_CURRENT_LIMIT_ERROR,
+    /**
+     * 未知
+     */
+     UN_KNOW
 
 
     }

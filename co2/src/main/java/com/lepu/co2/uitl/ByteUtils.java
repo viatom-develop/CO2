@@ -69,9 +69,12 @@ public class ByteUtils {
      * @功能 读取流
      */
     public static byte[] readStream(InputStream inStream) throws Exception {
-        int count = 0;
-        while (count == 0 && !Co2Constant.IS_TEST_DATA) {
-            count = inStream.available();
+        if (inStream==null){
+            return null;
+        }
+        int count = inStream.available();
+        if (count==0){
+            return null;
         }
         byte[] b = new byte[count];
         inStream.read(b);

@@ -15,6 +15,7 @@ import com.lepu.co2.constant.Co2Cmd;
 import com.lepu.co2.constant.Co2EventMsgConst;
 import com.lepu.co2.enums.BalanceGasEnum;
 import com.lepu.co2.enums.CO2UnitEnum;
+import com.lepu.co2.enums.ModelEnum;
 import com.lepu.co2.enums.SleepModeEnum;
 import com.lepu.co2.enums.TimePeriodEnum;
 import com.lepu.co2.listener.Co2CmdListener;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("init","onFail");
             }
         });
-        Co2Manager.getInstance().setConnectType(0);
+      //  Co2Manager.getInstance().setConnectType(0);
         //停止传输命令
         findViewById(R.id.btn_stop_continuous_mode).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,11 +160,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_capnostat_zero_command).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Co2Manager.getInstance().serialSendData(Co2Cmd.cmdCapnostatZeroCommand(), cmdReplyListener);
             }
-
-
         });
 
 
@@ -210,18 +208,24 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id. btn_test_mode).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().setTestMode(true);
+                Co2Manager.getInstance().setModel(ModelEnum.MODEL_TEST);
             }
         });
         //正式模式
         findViewById(R.id.btn_formal_mode ).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().setTestMode(false);
+                Co2Manager.getInstance().setModel(ModelEnum.MODEL_NORMAL);
             }
         });
 
-
+        //STOP模式
+        findViewById(R.id.btn_stop_mode ).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Co2Manager.getInstance().setModel(ModelEnum.MODEL_STOP);
+            }
+        });
 
         LiveEventBus.get(Co2EventMsgConst.MsgCo2NICK).observeForever(new Observer<Object>() {
             @Override
@@ -245,11 +249,12 @@ public class MainActivity extends AppCompatActivity {
                 //    Log.e("Co2Data RR==","RespRate=="+n.getRespRate());
                 }
                 if (n.getDPI()==1){
-                    if (n.getCo2Status().getBreathsFlag() == 1) {
+                  Log.e("lzd",n.getCo2Status().getTemperatureStatus()+"<--gzzhuangtai");
+                  /*  if (n.getCo2Status().getBreathsFlag() == 1) {
                         Log.e("lzd", "zhixibaoj");
                     } else if (n.getCo2Status().getBreathsFlag() == 0) {
                         Log.e("lzd", "zhixibaoj quxiao");
-                    }
+                    }*/
                 }
 
 

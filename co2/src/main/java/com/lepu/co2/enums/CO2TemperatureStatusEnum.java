@@ -19,5 +19,9 @@ public enum CO2TemperatureStatusEnum {
     /**
      * 11– 温度不稳定
      */
-    TEMPERATURE_UNSTABLE
+    TEMPERATURE_UNSTABLE,
+    /**
+     * 未知
+     */
+    UN_KNOW
 }

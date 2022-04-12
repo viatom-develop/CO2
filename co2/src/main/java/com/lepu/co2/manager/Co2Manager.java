@@ -7,8 +7,10 @@ import android.serialport.SerialPort;
 import androidx.annotation.NonNull;
 
 import com.jeremyliao.liveeventbus.LiveEventBus;
+import com.lepu.co2.constant.Co2Cmd;
 import com.lepu.co2.constant.Co2Constant;
 import com.lepu.co2.constant.Co2EventMsgConst;
+import com.lepu.co2.enums.ModelEnum;
 import com.lepu.co2.listener.Co2CmdListener;
 import com.lepu.co2.listener.Co2ConnectListener;
 import com.lepu.co2.obj.Co2Data;
@@ -46,9 +48,11 @@ public class Co2Manager {
     private static Co2Manager instance = null;
     //上下文
     Context mContext;
+    //模式
+    ModelEnum mModelEnum = ModelEnum.MODEL_NORMAL;
+    //关闭标志
+    private boolean closeFlag = false;
 
-    //连接状态 0为插入 1为拔出 这个值有上位机控制 这里默认为拔出
-    int connectType = 1;
     //测试数据
     byte[] co2TestData = new byte[0];
 
@@ -104,17 +108,24 @@ public class Co2Manager {
             mScheduledThreadPoolExecutor.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
+                    if (closeFlag) {
+                        closeSerialTask();
+                        return;
+                    }
                     try {
-                        if (Co2Constant.IS_TEST_DATA) {//测试模式
-                            //昨天采集的数据
-                            sendTestEcgDataFile();
-                        } else if (connectType==0){//正式数据
-                            if (mInputStream == null) return;
-                            byte[] buffer = ByteUtils.readStream(mInputStream);
-                          //  Log.e("lzd 2 接到数据", Arrays.toString(buffer));
+                        //正式数据
+                        byte[] buffer = ByteUtils.readStream(mInputStream);
+                        if (mModelEnum == ModelEnum.MODEL_TEST) {
+                            //测试模式
+                            buffer = sendTestEcgDataFile();
+                        } else if (mModelEnum == ModelEnum.MODEL_STOP) {
+                            buffer = null;
+                        }
+                        if (buffer!=null){
                             //处理数据
                             dataProcess(buffer);
                         }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -138,7 +149,10 @@ public class Co2Manager {
                 try {
                     mOutputStream.write(bytes);
                     mOutputStream.flush();
-                    mThreadCmdListener.execute(new ListenerListTask( new CmdTask(cmdReplyListener, bytes[0])));
+                    if (cmdReplyListener!=null){
+                        mThreadCmdListener.execute(new ListenerListTask( new CmdTask(cmdReplyListener, bytes[0])));
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     cmdReplyListener.onFail();
@@ -280,14 +294,23 @@ public class Co2Manager {
             default:
         }
     }
-
     /**
      * 设置测试模式
      *
-     * @param testMode
+     * @param modelEnum
      */
-    public void setTestMode(boolean testMode) {
-        Co2Constant.IS_TEST_DATA = testMode;
+    public void setModel(ModelEnum modelEnum) {
+        if (modelEnum==ModelEnum.MODEL_NORMAL){
+            co2TestData = null;
+            writeBytes(Co2Cmd.cmdStopContinuousMode(),null);
+        }else if (modelEnum==ModelEnum.MODEL_TEST){
+            writeBytes(Co2Cmd.cmdStopContinuousMode(),null);
+        }else if (modelEnum==ModelEnum.MODEL_STOP){
+            writeBytes(Co2Cmd.cmdWaveformDataMode(),null);
+        }
+
+        mModelEnum = modelEnum;
+
     }
 
     //记录读到文件的坐标
@@ -298,11 +321,9 @@ public class Co2Manager {
     /**
      * 发送测试数据
      */
-    private void sendTestEcgDataFile() {
-
-
+    private byte[] sendTestEcgDataFile() {
         try {
-            if (co2TestData.length == 0) {
+            if (co2TestData==null||co2TestData.length == 0) {
                 co2TestData = ByteUtils.getFromAssets(mContext);
             }
             //要发送的数据
@@ -312,32 +333,62 @@ public class Co2Manager {
             } else {
                 ecgdataLength = readAmount;
             }
-            byte[] ecgdata = new byte[ecgdataLength];
-            System.arraycopy(co2TestData, fileindex, ecgdata, 0, ecgdataLength);
+            byte[] testData = new byte[ecgdataLength];
+            System.arraycopy(co2TestData, fileindex, testData, 0, ecgdataLength);
             fileindex = fileindex + readAmount;
-            if (ecgdata.length<readAmount){
+            if (testData.length<readAmount){
                 fileindex=0;
             }
-            dataProcess(ecgdata);
+
+            return testData;
+        //    dataProcess(ecgdata);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        return null;
+    }
+    /**
+     * 关闭标志
+     */
+    public void Close() {
+        this.closeFlag = true;
+    }
+    /**
+     * 关闭串口 结束读取任务
+     */
+    private void closeSerialTask() {
+        if (mScheduledThreadPoolExecutor != null) {
+            try {
+                // shutdown只是起到通知的作用
+                // 只调用shutdown方法结束线程池是不够的
+                mScheduledThreadPoolExecutor.shutdown();
+                // (所有的任务都结束的时候，返回TRUE)
+                if (!mScheduledThreadPoolExecutor.awaitTermination(0, TimeUnit.MILLISECONDS)) {
+                    // 超时的时候向线程池中所有的线程发出中断(interrupted)。
+                    mScheduledThreadPoolExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                // awaitTermination方法被中断的时候也中止线程池中全部的线程的执行。
+                e.printStackTrace();
+            } finally {
+                mScheduledThreadPoolExecutor.shutdownNow();
+                mScheduledThreadPoolExecutor = null;
+            }
+        }
 
-        // Log.d("noTask", "单组处理时间发送时间" + (System.currentTimeMillis() - gettasktime)+"---"+mTestEcgIndex+"---");
+
+
+        mSerialPort.tryClose();
 
 
     }
+
+
     public static void main(String[] args) {
         byte b = (byte) 80;
     }
 
-    public int getConnectType() {
-        return connectType;
-    }
 
-    public void setConnectType(int connectType) {
-        this.connectType = connectType;
-    }
 }
