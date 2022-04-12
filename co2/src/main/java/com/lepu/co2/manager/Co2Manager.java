@@ -3,7 +3,6 @@ package com.lepu.co2.manager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.serialport.SerialPort;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -16,19 +15,30 @@ import com.lepu.co2.obj.Co2Data;
 import com.lepu.co2.obj.Co2O2Data;
 import com.lepu.co2.obj.NACK;
 import com.lepu.co2.obj.SerialMsg;
+import com.lepu.co2.task.CmdTask;
+import com.lepu.co2.task.ListenerListTask;
 import com.lepu.co2.uitl.ByteUtils;
 import com.lepu.co2.uitl.ChecksumUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Co2Manager {
     //定时获取串口数据任务
     ScheduledThreadPoolExecutor mScheduledThreadPoolExecutor;
+    //写入任务队列
+    ScheduledThreadPoolExecutor mWriteThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+    //监听事件队列
+    public ThreadPoolExecutor mThreadCmdListener = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);//监听事件队列
+    //请求命令回列表
+    public List<CmdTask> mCmdTaskList = new ArrayList<>();
     SerialPort mSerialPort;
     InputStream mInputStream;
     OutputStream mOutputStream;
@@ -36,10 +46,9 @@ public class Co2Manager {
     private static Co2Manager instance = null;
     //上下文
     Context mContext;
-    //请求命令回调
-    Co2CmdListener mCmdReplyListener;
+
     //连接状态 0为插入 1为拔出 这个值有上位机控制 这里默认为拔出
-    int connectType=1;
+    int connectType = 1;
     //测试数据
     byte[] co2TestData = new byte[0];
 
@@ -119,32 +128,32 @@ public class Co2Manager {
      * 向串口写入数据
      */
     public void serialSendData(byte[] bytes, Co2CmdListener cmdReplyListener) {
-        try {
-        //    Log.e("tag","写入数据");
-            mCmdReplyListener = cmdReplyListener;
-            writeBytes (bytes);
+        writeBytes(bytes, cmdReplyListener);
+    }
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            if (mCmdReplyListener != null) {
-                mCmdReplyListener.onFail(bytes[0]);
+    private void writeBytes(byte[] bytes, Co2CmdListener cmdReplyListener) {
+        mWriteThreadPoolExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mOutputStream.write(bytes);
+                    mOutputStream.flush();
+                    mThreadCmdListener.execute(new ListenerListTask( new CmdTask(cmdReplyListener, bytes[0])));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    cmdReplyListener.onFail();
+                }
+
             }
-        }
-    }
-    private void writeBytes (byte[] bytes) throws IOException {
-        OutputStream mOutputStream;
-        mOutputStream = mSerialPort.getOutputStream();
-        for (int i = 0; i < bytes.length; i++) {
-            mOutputStream.write(bytes[i]);
-        }
-        mOutputStream.flush();
-    }
+        });
 
+    }
 
 
     byte[] surplusData;//用于记录任务剩余的数据 放入下一个任务继续遍历
     int taskindex = 0;
     long time = 0;
+
     public void dataProcess(byte[] dataArr) {
         time = System.currentTimeMillis();
         //    Log.e("接收到数据时间", time + "");
@@ -227,15 +236,11 @@ public class Co2Manager {
 
             break;
             case Co2Constant.TYPE_Capnostat_Zero_Command: {
-                if (mCmdReplyListener!=null){
-                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Capnostat_Zero_Command);
-                }
+                mThreadCmdListener.execute(new ListenerListTask(Co2Constant.TYPE_Capnostat_Zero_Command,false));
             }
             break;
             case Co2Constant.TYPE_Get_Set_Sensor_Settings: {
-                if (mCmdReplyListener!=null){
-                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Get_Set_Sensor_Settings);
-                }
+                mThreadCmdListener.execute(new ListenerListTask(Co2Constant.TYPE_Get_Set_Sensor_Settings,false));
             }
             break;
             case Co2Constant.TYPE_CO2_O2_Waveform_Mode: {
@@ -252,34 +257,24 @@ public class Co2Manager {
             }
             break;
             case Co2Constant.TYPE_Stop_Continuous_Mode: {
-                if (mCmdReplyListener!=null){
-                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Stop_Continuous_Mode);
-                }
+                mThreadCmdListener.execute(new ListenerListTask(Co2Constant.TYPE_Stop_Continuous_Mode,false));
+
             }
             break;
             case Co2Constant.TYPE_GET_SOFTWARE_REVISION: {
-                if (mCmdReplyListener!=null){
-                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_GET_SOFTWARE_REVISION);
-                }
+                mThreadCmdListener.execute(new ListenerListTask(Co2Constant.TYPE_GET_SOFTWARE_REVISION,false));
             }
             break;
             case Co2Constant.TYPE_Sensor_Capabilities: {
-                if (mCmdReplyListener!=null){
-                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Sensor_Capabilities);
-                }
+                mThreadCmdListener.execute(new ListenerListTask(Co2Constant.TYPE_Sensor_Capabilities,false));
             }
             break;
             case Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag: {
-                if (mCmdReplyListener!=null){
-                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag);
-                }
+                mThreadCmdListener.execute(new ListenerListTask(Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag,false));
             }
             break;
             case Co2Constant.TYPE_Reset_Capnostat: {
-                if (mCmdReplyListener!=null){
-                    mCmdReplyListener.onSuccess(Co2Constant.TYPE_Reset_Capnostat);
-                }
-
+                mThreadCmdListener.execute(new ListenerListTask(Co2Constant.TYPE_Reset_Capnostat,false));
             }
             break;
             default:

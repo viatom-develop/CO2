@@ -43,23 +43,9 @@ public class MainActivity extends AppCompatActivity {
         Co2Manager.getInstance().init(this, "/dev/ttyS0", new Co2ConnectListener() {
             @Override
             public void onSuccess() {
-                 Log.e("init","onSuccess");
+                 Log.e("lzd","onSuccess");
 
-                new Thread(){
-                    @Override
-                    public void run() {
-                        super.run();
-                        while (true){
-                        try {
-                            sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                            Log.e("lzd 1","发送数据");
-                        Co2Manager.getInstance().serialSendData(new byte[]{1}, cmdReplyListener);
-                        }
-                    }
-                }.start();
+
             }
 
             @Override
@@ -101,13 +87,27 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_set_time_period).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetTimePeriod(TimePeriodEnum.TimePeriod10S), cmdReplyListener);
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetTimePeriod(TimePeriodEnum.TimePeriod1B), cmdReplyListener);
             }
 
 
         });
 
+        //设置呼吸窒息
+        findViewById(R.id.btn_apnea_delay_time).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdSetApneaDelayTime(5), cmdReplyListener);
+            }
+        });
 
+        //设置重置呼吸窒息
+        findViewById(R.id.btn_reset_apnea_delay).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Co2Manager.getInstance().serialSendData(Co2Cmd.cmdResetApneaDelay(), cmdReplyListener);
+            }
+        });
 
         //设置工作温度
         findViewById(R.id.btn_set_gas_temperature).setOnClickListener(new View.OnClickListener() {
@@ -237,22 +237,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(Object o) {
                 Co2Data n = (Co2Data) o;
-                Log.e("Co2Data",n.getCo2Wave()+"");
+           //     Log.e("Co2Data",n.getCo2Wave()+"");
                 if (n.getDPI()==2){
                     Log.e("Co2Data==",n.getETCO2()+"");
                 }
                 if (n.getDPI()==3){
-                    Log.e("Co2Data RR==","RespRate=="+n.getRespRate());
+                //    Log.e("Co2Data RR==","RespRate=="+n.getRespRate());
+                }
+                if (n.getDPI()==1){
+                    if (n.getCo2Status().getBreathsFlag() == 1) {
+                        Log.e("lzd", "zhixibaoj");
+                    } else if (n.getCo2Status().getBreathsFlag() == 0) {
+                        Log.e("lzd", "zhixibaoj quxiao");
+                    }
                 }
 
-                co2Index++;
+
+              /*  co2Index++;
                 if (co2Index % 100 == 0) {
                     Log.e("收到1秒数据","-------------------------");
                 }
 
                 if (getDataToFile){
                     FileUtils.write2File(file,n.getOriginalData());
-                }
+                }*/
 
             }
         });
@@ -262,18 +270,18 @@ public class MainActivity extends AppCompatActivity {
 
     Co2CmdListener cmdReplyListener = new Co2CmdListener() {
         @Override
-        public void onSuccess(byte cmd) {
-            Log.e("CmdReply", "onSuccess");
+        public void onSuccess() {
+            Log.e("lzd", "onSuccess");
         }
 
         @Override
-        public void onFail(byte cmd) {
-            Log.e("CmdReply", "onFail");
+        public void onFail() {
+            Log.e("lzd", "onFail");
         }
 
         @Override
-        public void onTimeOut(byte cmd) {
-            Log.e("CmdReply", "onTimeOut");
+        public void onTimeOut() {
+            Log.e("lzd", "onTimeOut");
         }
     };
 

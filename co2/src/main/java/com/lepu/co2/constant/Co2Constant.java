@@ -2,7 +2,7 @@ package com.lepu.co2.constant;
 
 public class Co2Constant {
 
-
+    public static int CMD_TIMEOUT=1000;
 
     /**
      * 是否是测试数据

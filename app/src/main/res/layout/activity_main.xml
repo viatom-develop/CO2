@@ -172,6 +172,26 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/btn_apnea_delay_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置呼吸窒息时间"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+        android:id="@+id/btn_reset_apnea_delay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="重置呼吸窒息"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     </LinearLayout>
 
 

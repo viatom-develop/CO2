@@ -8,9 +8,9 @@ import com.lepu.co2.constant.Co2Constant;
  */
 public interface Co2CmdListener {
     //请求成功
-    void onSuccess(byte cmd);
+    void onSuccess();
     //请求失败
-    void onFail(byte cmd);
+    void onFail();
     //请求超时
-    void onTimeOut(byte cmd);
+    void onTimeOut();
 }

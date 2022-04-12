@@ -87,7 +87,18 @@ public class Co2Cmd {
         return msg.toBytes();
     }
 
-
+    /**
+     * 8.3 6设置呼吸窒息时间
+     * 默认值:20秒。
+     * 分辨率:1秒(10到60秒)
+     */
+    public static byte[] cmdSetApneaDelayTime(int timeOut) {
+        byte[] data = new byte[2];
+        data[0]=6;
+        data[1]= (byte)timeOut;
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Get_Set_Sensor_Settings, data);
+        return msg.toBytes();
+    }
     /**
      * 8.3 7设置二氧化碳单位
      */
@@ -145,6 +156,16 @@ public class Co2Cmd {
     public static byte[] cmdStopContinuousMode() {
         byte[] data = new byte[0];
         SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Stop_Continuous_Mode, data);
+        return msg.toBytes();
+    }
+
+
+    /**
+     * 该命令用于强制系统清除“检测不到呼吸”标志
+     */
+    public static byte[] cmdResetApneaDelay() {
+        byte[] data = new byte[0];
+        SerialMsg msg = new SerialMsg(Co2Constant.TYPE_Reset_No_Breaths_Detected_Flag, data);
         return msg.toBytes();
     }
 

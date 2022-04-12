@@ -6,7 +6,7 @@ package com.lepu.co2.enums;
 public enum CO2UnitEnum {
     mmHg("mmHg",(byte)0),
     KPa("KPa",(byte)1),
-    percent("percent",(byte)2);
+    percent("%",(byte)2);
 
 
     String key;
