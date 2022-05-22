@@ -249,8 +249,8 @@ public class MainActivity extends AppCompatActivity {
                 //    Log.e("Co2Data RR==","RespRate=="+n.getRespRate());
                 }
                 if (n.getDPI()==1){
-                  Log.e("lzd",n.getCo2Status().getTemperatureStatus()+"<--gzzhuangtai");
-                  /*  if (n.getCo2Status().getBreathsFlag() == 1) {
+                 /* Log.e("lzd",n.getCo2Status().getTemperatureStatus()+"<--gzzhuangtai");
+                    if (n.getCo2Status().getBreathsFlag() == 1) {
                         Log.e("lzd", "zhixibaoj");
                     } else if (n.getCo2Status().getBreathsFlag() == 0) {
                         Log.e("lzd", "zhixibaoj quxiao");

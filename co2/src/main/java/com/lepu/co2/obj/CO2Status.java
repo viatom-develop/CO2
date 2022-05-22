@@ -1,8 +1,12 @@
 package com.lepu.co2.obj;
 
+import android.util.Log;
+
 import com.lepu.co2.enums.CO2CalibrationStatus;
 import com.lepu.co2.enums.CO2SourceCurrent;
 import com.lepu.co2.enums.CO2TemperatureStatusEnum;
+import com.lepu.co2.enums.PrioritizedCO2Enum;
+import com.lepu.co2.uitl.StringtoHexUitl;
 
 /**
  * CO2状态 在DPI等于1的时候 有值
@@ -112,6 +116,10 @@ public class CO2Status {
      int SidestreamAdapterNotDetected;
 
     /**
+     * 错误优先处理字段
+     */
+    PrioritizedCO2Enum prioritizedCO2Enum;
+    /**
      * 默认构造函数 一切正常
      */
     public CO2Status() {
@@ -142,6 +150,8 @@ public class CO2Status {
         pumpLifeExceeded = 0;
         //未检测到侧流适配器
         SidestreamAdapterNotDetected= 0;
+        //错误优先处理字段
+        prioritizedCO2Enum=PrioritizedCO2Enum.Normal;
 
     }
 
@@ -208,7 +218,8 @@ public class CO2Status {
         pumpLifeExceeded = buf[7] >> 1 & 0x1;
         //未检测到侧流适配器
         SidestreamAdapterNotDetected= buf[7] >> 0 & 0x1;
-
+        //错误优先处理字段
+        prioritizedCO2Enum=  PrioritizedCO2Enum.getPrioritizedCO2Status(buf[8]);
     }
 
 
@@ -354,6 +365,14 @@ public class CO2Status {
 
     public void setSidestreamAdapterNotDetected(int sidestreamAdapterNotDetected) {
         SidestreamAdapterNotDetected = sidestreamAdapterNotDetected;
+    }
+
+    public PrioritizedCO2Enum getPrioritizedCO2Enum() {
+        return prioritizedCO2Enum;
+    }
+
+    public void setPrioritizedCO2Enum(PrioritizedCO2Enum prioritizedCO2Enum) {
+        this.prioritizedCO2Enum = prioritizedCO2Enum;
     }
 
     @Override

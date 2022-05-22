@@ -387,7 +387,16 @@ public class Co2Manager {
 
 
     public static void main(String[] args) {
-        byte b = (byte) 80;
+        float a=280f;
+
+        System.out.println((a/10)+"");
+
+        float b=(a/10/760);
+
+        System.out.println(b+"");
+
+
+
     }
 
 

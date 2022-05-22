@@ -84,10 +84,16 @@ public class Co2Data {
                     break;
                     case 2:{
                         ETCO2= ((buf[5] & 0xFF) | (short) (buf[4] << 7));
+                        if (ETCO2<150){
+                            ETCO2=0;
+                        }
                     }
                     break;
                     case 3:{
                         respRate = ((buf[5] & 0xFF) | (short) (buf[4] << 7));
+                        if(respRate>150){
+                            respRate=0;
+                        }
                     }
                     break;
                     case 4:{
